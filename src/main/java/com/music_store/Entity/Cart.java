@@ -15,7 +15,6 @@ public class Cart {
     private Double price;
     private String album;
 
-    // 构造方法
     public Cart() {}
 
     public Cart(Integer userId, Integer musicId, Integer quantity) {
@@ -24,7 +23,6 @@ public class Cart {
         this.quantity = quantity;
     }
 
-    // Getter和Setter
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 

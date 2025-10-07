@@ -17,10 +17,6 @@ public class CategoryService {
         return categoryDao.selectAll();
     }
 
-    public Category getById(Integer id) {
-        return categoryDao.selectById(id);
-    }
-
     public boolean addCategory(Category category) {
         return categoryDao.insert(category) > 0;
     }

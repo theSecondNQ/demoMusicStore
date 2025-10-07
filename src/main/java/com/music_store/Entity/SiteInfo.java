@@ -10,10 +10,8 @@ public class SiteInfo {
     private String aboutUs;
     private String copyright;
 
-    // 构造方法
     public SiteInfo() {}
 
-    // Getter和Setter
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 

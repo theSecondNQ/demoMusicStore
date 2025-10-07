@@ -1,7 +1,6 @@
 package com.music_store.Dao;
 
 import com.music_store.Entity.Favourite;
-import com.music_store.Entity.Music;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

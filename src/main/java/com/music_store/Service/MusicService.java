@@ -17,10 +17,6 @@ public class MusicService {
         return musicDao.selectByCondition(keyword, category);
     }
 
-    public List<Music> getAllMusic() {
-        return musicDao.selectAll();
-    }
-
     public Music getById(Integer id) {
         return musicDao.selectById(id);
     }

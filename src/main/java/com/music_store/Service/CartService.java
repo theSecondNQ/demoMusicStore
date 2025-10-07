@@ -32,10 +32,6 @@ public class CartService {
         return cartDao.delete(cartId) > 0;
     }
 
-    public boolean removeFromCartByUserAndMusic(Integer userId, Integer musicId) {
-        return cartDao.deleteByUserAndMusic(userId, musicId) > 0;
-    }
-
     public List<Cart> getCartByUserId(Integer userId) {
         return cartDao.selectByUserId(userId);
     }

@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
@@ -83,11 +82,17 @@ public class UserController {
         user.setId(currentUser.getId());
         if (userService.updateUserInfo(user)) {
             // 更新session中的用户信息
-            session.setAttribute("user", userService.selectById(currentUser.getId()));
-            model.addAttribute("msg", "资料更新成功");
+            User updatedUser = userService.selectById(currentUser.getId());
+            session.setAttribute("user", updatedUser);
+            model.addAttribute("user", updatedUser);
+            model.addAttribute("success", "资料更新成功");
         } else {
             model.addAttribute("msg", "资料更新失败");
+            // 重新加载用户信息
+            User updatedUser = userService.selectById(currentUser.getId());
+            model.addAttribute("user", updatedUser);
         }
+
         return "profile";
     }
 
@@ -98,29 +103,40 @@ public class UserController {
                                  @RequestParam String confirmPassword,
                                  HttpSession session,
                                  Model model) {
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
             return "redirect:/login";
         }
 
         // 验证新密码和确认密码是否一致
         if (!newPassword.equals(confirmPassword)) {
             model.addAttribute("passwordError", "新密码和确认密码不一致");
+            // 重新加载用户信息
+            User user = userService.selectById(currentUser.getId());
+            model.addAttribute("user", user);
             return "profile";
         }
 
         // 验证新密码长度
         if (newPassword.length() < 6) {
             model.addAttribute("passwordError", "新密码长度不能少于6位");
+            // 重新加载用户信息
+            User user = userService.selectById(currentUser.getId());
+            model.addAttribute("user", user);
             return "profile";
         }
 
-        if (userService.changePassword(user.getId(), oldPassword, newPassword)) {
+        if (userService.changePassword(currentUser.getId(), oldPassword, newPassword)) {
             model.addAttribute("success", "密码修改成功");
             // 更新session中的用户信息
-            session.setAttribute("user", userService.selectById(user.getId()));
+            User updatedUser = userService.selectById(currentUser.getId());
+            session.setAttribute("user", updatedUser);
+            model.addAttribute("user", updatedUser);
         } else {
             model.addAttribute("passwordError", "原密码错误");
+            // 重新加载用户信息
+            User user = userService.selectById(currentUser.getId());
+            model.addAttribute("user", user);
         }
 
         return "profile";

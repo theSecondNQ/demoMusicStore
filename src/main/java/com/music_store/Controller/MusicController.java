@@ -69,7 +69,6 @@ public class MusicController {
         return "music_detail";
     }
 
-    // 管理员功能：添加音乐页面
     @GetMapping("/add")
     public String addPage(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");

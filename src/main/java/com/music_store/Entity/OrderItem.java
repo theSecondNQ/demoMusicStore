@@ -4,15 +4,12 @@ public class OrderItem {
     private Integer id;
     private Integer orderId;
     private Integer musicId;
-    private String musicTitle;
     private String artist;
     private Double price;
     private Integer quantity;
 
-    // 构造方法
     public OrderItem() {}
 
-    // Getter和Setter
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -21,9 +18,6 @@ public class OrderItem {
 
     public Integer getMusicId() { return musicId; }
     public void setMusicId(Integer musicId) { this.musicId = musicId; }
-
-    public String getMusicTitle() { return musicTitle; }
-    public void setMusicTitle(String musicTitle) { this.musicTitle = musicTitle; }
 
     public String getArtist() { return artist; }
     public void setArtist(String artist) { this.artist = artist; }

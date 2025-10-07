@@ -9,13 +9,11 @@ public class Favourite {
     private Date createTime;
 
     // 关联的音乐信息（用于显示）
-    private String musicTitle;
     private String artist;
     private String album;
     private Double price;
     private String categoryName;
 
-    // 构造方法
     public Favourite() {}
 
     public Favourite(Integer userId, Integer musicId) {
@@ -23,7 +21,6 @@ public class Favourite {
         this.musicId = musicId;
     }
 
-    // Getter和Setter
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -35,9 +32,6 @@ public class Favourite {
 
     public Date getCreateTime() { return createTime; }
     public void setCreateTime(Date createTime) { this.createTime = createTime; }
-
-    public String getMusicTitle() { return musicTitle; }
-    public void setMusicTitle(String musicTitle) { this.musicTitle = musicTitle; }
 
     public String getArtist() { return artist; }
     public void setArtist(String artist) { this.artist = artist; }

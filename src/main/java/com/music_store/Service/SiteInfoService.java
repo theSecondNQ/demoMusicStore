@@ -43,7 +43,7 @@ public class SiteInfoService {
         siteInfo.setSiteName("音乐商店");
         siteInfo.setCustomerServicePhone("400-123-4567");
         siteInfo.setZipCode("100000");
-        siteInfo.setAddress("北京市朝阳区xxx街道");
+        siteInfo.setAddress("广州市天河区五山街道486号");
         siteInfo.setEmail("service@musicstore.com");
         siteInfo.setAboutUs("专业的在线音乐销售平台");
         siteInfo.setCopyright("© 2025 音乐商店 版权所有");

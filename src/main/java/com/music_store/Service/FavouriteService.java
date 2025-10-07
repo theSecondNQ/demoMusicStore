@@ -17,7 +17,7 @@ public class FavouriteService {
         // 检查是否已经收藏
         Favourite existing = favouriteDao.selectByUserAndMusic(userId, musicId);
         if (existing != null) {
-            return true; // 已经收藏过了
+            return true;
         }
 
         Favourite favourite = new Favourite();

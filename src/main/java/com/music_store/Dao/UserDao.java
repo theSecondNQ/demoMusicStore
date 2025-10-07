@@ -1,6 +1,6 @@
-package com.music_store.Dao; // 或者您的实际包名
+package com.music_store.Dao;
 
-import com.music_store.Entity.User; // 或者您的实际包名
+import com.music_store.Entity.User;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

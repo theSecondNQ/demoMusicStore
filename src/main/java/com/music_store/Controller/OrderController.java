@@ -23,7 +23,6 @@ public class OrderController {
     @Autowired
     private CartService cartService;
 
-    // 用户提交订单
     @PostMapping("/create")
     public String createOrder(String paymentMethod, String shippingAddress, HttpSession session) {
         User user = (User) session.getAttribute("user");

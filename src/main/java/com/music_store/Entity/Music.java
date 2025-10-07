@@ -6,7 +6,6 @@ public class Music {
     private Integer id;
     private String title;
     private String artist;
-    private Integer categoryId;
     private String categoryName;
     private String album;
     private Integer duration;
@@ -14,19 +13,18 @@ public class Music {
     private Double price;
     private Date createTime;
 
-    // 构造方法
+    private Boolean favourite = false;
+
     public Music() {}
 
-    public Music(String title, String artist, Integer categoryId, String album, Integer duration, Double price) {
+    public Music(String title, String artist, String album, Integer duration, Double price) {
         this.title = title;
         this.artist = artist;
-        this.categoryId = categoryId;
         this.album = album;
         this.duration = duration;
         this.price = price;
     }
 
-    // Getter和Setter
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -35,9 +33,6 @@ public class Music {
 
     public String getArtist() { return artist; }
     public void setArtist(String artist) { this.artist = artist; }
-
-    public Integer getCategoryId() { return categoryId; }
-    public void setCategoryId(Integer categoryId) { this.categoryId = categoryId; }
 
     public String getCategoryName() { return categoryName; }
     public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
@@ -56,8 +51,6 @@ public class Music {
 
     public Date getCreateTime() { return createTime; }
     public void setCreateTime(Date createTime) { this.createTime = createTime; }
-
-    private Boolean favourite = false;
 
     public Boolean getFavourite() { return favourite; }
     public void setFavourite(Boolean favourite) { this.favourite = favourite; }

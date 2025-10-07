@@ -5,7 +5,6 @@ public class Category {
     private String name;
     private String description;
 
-    // 构造方法
     public Category() {}
 
     public Category(String name, String description) {
@@ -13,7 +12,6 @@ public class Category {
         this.description = description;
     }
 
-    // Getter和Setter
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 

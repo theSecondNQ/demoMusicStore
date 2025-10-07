@@ -10,7 +10,6 @@ public class User {
     private String role;
     private Date createTime;
 
-    // 构造方法
     public User() {
     }
 
@@ -21,7 +20,6 @@ public class User {
         this.role = role;
     }
 
-    // Getter和Setter
     public Integer getId() {
         return id;
     }

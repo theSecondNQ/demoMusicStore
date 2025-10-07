@@ -9,19 +9,16 @@ public class Order {
     private Integer userId;
     private String username;
     private Double totalAmount;
-    private String status; // pending, paid, completed, cancelled
+    private String status; // pending, paid, completed, cancelled 四个订单状态
     private String paymentMethod;
     private String shippingAddress;
     private Date createTime;
     private Date updateTime;
 
-    // 关联的订单项
     private List<OrderItem> orderItems;
 
-    // 构造方法
     public Order() {}
 
-    // Getter和Setter
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 

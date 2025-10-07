@@ -38,23 +38,26 @@
 <!-- 错误消息 -->
 <div th:if="${msg}" class="error-msg" th:text="${msg}"></div>
 
-<div class="user-info">
+<div class="user-info" th:if="${user}">
     <h3>基本信息</h3>
-    <p><strong>用户名：</strong> <span th:text="${user.username}"></span></p>
-    <p><strong>角色：</strong> <span th:text="${user.role}"></span></p>
-    <p><strong>注册时间：</strong> <span th:text="${#dates.format(user.createTime, 'yyyy-MM-dd HH:mm')}"></span></p>
+    <p><strong>用户名：</strong> <span th:text="${user.username}">未知用户</span></p>
+    <p><strong>角色：</strong> <span th:text="${user.role}">未知角色</span></p>
+    <p><strong>注册时间：</strong>
+        <span th:if="${user.createTime}" th:text="${#dates.format(user.createTime, 'yyyy-MM-dd HH:mm')}">未知时间</span>
+        <span th:unless="${user.createTime}">未知时间</span>
+    </p>
 </div>
 
-<div class="profile-section">
+<div class="profile-section" th:if="${user}">
     <h3>修改个人信息</h3>
-    <form th:action="@{/updateProfile}" method="post" th:object="${user}">
-        <input type="hidden" th:field="*{id}">
-        <input type="hidden" th:field="*{username}">
-        <input type="hidden" th:field="*{role}">
+    <form th:action="@{/updateProfile}" method="post">
+        <input type="hidden" name="id" th:value="${user.id}">
+        <input type="hidden" name="username" th:value="${user.username}">
+        <input type="hidden" name="role" th:value="${user.role}">
 
         <div class="form-group">
             <label for="email">邮箱：</label>
-            <input type="email" id="email" th:field="*{email}">
+            <input type="email" id="email" name="email" th:value="${user.email}">
         </div>
 
         <button type="submit" class="btn btn-primary">更新信息</button>
@@ -95,10 +98,16 @@
     </div>
 </div>
 
-<div style="margin-top: 20px;">
+<div style="margin-top: 20px;" th:if="${user}">
     <a th:href="@{/favourite/list}" class="btn btn-primary">我的收藏</a>
     <a th:href="@{/order/list}" class="btn btn-primary" th:if="${user.role != 'admin'}">我的订单</a>
     <a th:href="@{/cart/list}" class="btn btn-primary">购物车</a>
+</div>
+
+<!-- 用户信息为空时的提示 -->
+<div th:unless="${user}" class="error-msg">
+    <h3>用户信息加载失败</h3>
+    <p>请<a th:href="@{/login}">重新登录</a>后访问个人中心。</p>
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>
