@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>个人中心 - 音乐商店</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .header { margin-bottom: 20px; }
+        .profile-section, .password-section {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;
+        }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .success-msg { color: green; margin-bottom: 15px; padding: 10px; background: #d4edda; border-radius: 4px; }
+        .error-msg { color: red; margin-bottom: 15px; padding: 10px; background: #f8d7da; border-radius: 4px; }
+        .info-msg { color: #856404; margin-bottom: 15px; padding: 10px; background: #fff3cd; border-radius: 4px; }
+        .user-info { margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <a th:href="@{/music/list}">← 返回首页</a>
+    <h1>个人中心</h1>
+</div>
+
+<!-- 成功消息 -->
+<div th:if="${success}" class="success-msg" th:text="${success}"></div>
+
+<!-- 错误消息 -->
+<div th:if="${msg}" class="error-msg" th:text="${msg}"></div>
+
+<div class="user-info">
+    <h3>基本信息</h3>
+    <p><strong>用户名：</strong> <span th:text="${user.username}"></span></p>
+    <p><strong>角色：</strong> <span th:text="${user.role}"></span></p>
+    <p><strong>注册时间：</strong> <span th:text="${#dates.format(user.createTime, 'yyyy-MM-dd HH:mm')}"></span></p>
+</div>
+
+<div class="profile-section">
+    <h3>修改个人信息</h3>
+    <form th:action="@{/updateProfile}" method="post" th:object="${user}">
+        <input type="hidden" th:field="*{id}">
+        <input type="hidden" th:field="*{username}">
+        <input type="hidden" th:field="*{role}">
+
+        <div class="form-group">
+            <label for="email">邮箱：</label>
+            <input type="email" id="email" th:field="*{email}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">更新信息</button>
+    </form>
+</div>
+
+<div class="password-section">
+    <h3>修改密码</h3>
+
+    <!-- 密码错误消息 -->
+    <div th:if="${passwordError}" class="error-msg" th:text="${passwordError}"></div>
+
+    <form th:action="@{/changePassword}" method="post">
+        <div class="form-group">
+            <label for="oldPassword">原密码：</label>
+            <input type="password" id="oldPassword" name="oldPassword" required>
+        </div>
+
+        <div class="form-group">
+            <label for="newPassword">新密码：</label>
+            <input type="password" id="newPassword" name="newPassword" required minlength="6">
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">确认新密码：</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+        </div>
+
+        <button type="submit" class="btn btn-success">修改密码</button>
+    </form>
+
+    <div class="info-msg">
+        <strong>密码要求：</strong>
+        <ul>
+            <li>新密码长度不能少于6位</li>
+            <li>新密码和确认密码必须一致</li>
+        </ul>
+    </div>
+</div>
+
+<div style="margin-top: 20px;">
+    <a th:href="@{/favourite/list}" class="btn btn-primary">我的收藏</a>
+    <a th:href="@{/order/list}" class="btn btn-primary" th:if="${user.role != 'admin'}">我的订单</a>
+    <a th:href="@{/cart/list}" class="btn btn-primary">购物车</a>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

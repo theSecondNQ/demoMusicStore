@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.music_store.Dao.MusicDao">
+
+    <select id="selectByCondition" resultType="com.music_store.Entity.Music">
+        SELECT m.*, c.name as categoryName
+        FROM music m
+        LEFT JOIN category c ON m.category_id = c.id
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            AND (m.title LIKE CONCAT('%',#{keyword},'%')
+            OR m.artist LIKE CONCAT('%',#{keyword},'%')
+            OR m.album LIKE CONCAT('%',#{keyword},'%'))
+        </if>
+        <if test="category != null and category != ''">
+            AND c.name = #{category}
+        </if>
+        ORDER BY m.create_time DESC
+    </select>
+
+</mapper>

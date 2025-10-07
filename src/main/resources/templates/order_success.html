@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>订单提交成功 - 音乐商店</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; }
+        .success-icon { font-size: 60px; color: #28a745; margin: 20px 0; }
+        .order-info { background: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0; text-align: left; }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; margin: 10px; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+    </style>
+</head>
+<body>
+<div class="success-icon">✓</div>
+<h1>订单提交成功！</h1>
+
+<div class="order-info" th:if="${order}">
+    <h3>订单信息</h3>
+    <p><strong>订单号：</strong> <span th:text="${order.orderNumber}"></span></p>
+    <p><strong>订单金额：</strong> ￥<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span></p>
+    <p><strong>订单状态：</strong> <span th:text="${order.status}"></span></p>
+    <p><strong>支付方式：</strong> <span th:text="${order.paymentMethod}"></span></p>
+    <p><strong>配送地址：</strong> <span th:text="${order.shippingAddress}"></span></p>
+    <p><strong>下单时间：</strong> <span th:text="${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm')}"></span></p>
+</div>
+
+<div style="margin-top: 30px;">
+    <a th:href="@{/order/list}" class="btn btn-primary">查看我的订单</a>
+    <a th:href="@{/music/list}" class="btn btn-success">继续购物</a>
+</div>
+
+<div style="margin-top: 30px; padding: 15px; background: #e7f3ff; border-radius: 5px;">
+    <h4>下一步操作：</h4>
+    <p>请在"我的订单"页面查看订单状态，管理员处理订单后状态会更新。</p>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

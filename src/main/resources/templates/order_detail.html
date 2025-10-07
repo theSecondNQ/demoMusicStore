@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>订单详情 - 音乐商店</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .header { margin-bottom: 20px; }
+        .order-info, .order-items { border: 1px solid #ddd; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .order-item { padding: 10px 0; border-bottom: 1px solid #eee; }
+        .total { font-size: 18px; font-weight: bold; margin: 20px 0; }
+        .btn { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-primary { background: #007bff; color: white; }
+        .status-pending { color: #856404; background: #fff3cd; padding: 3px 8px; border-radius: 3px; }
+        .status-paid { color: #0c5460; background: #d1ecf1; padding: 3px 8px; border-radius: 3px; }
+        .status-completed { color: #155724; background: #d4edda; padding: 3px 8px; border-radius: 3px; }
+        .status-cancelled { color: #721c24; background: #f8d7da; padding: 3px 8px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <a th:href="@{/order/list}">← 返回订单列表</a>
+    <h1>订单详情</h1>
+</div>
+
+<div th:if="${order}" class="order-info">
+    <h3>订单信息</h3>
+    <p><strong>订单号：</strong> <span th:text="${order.orderNumber}"></span></p>
+    <p><strong>订单状态：</strong> <span th:class="'status-' + ${order.status}" th:text="${order.status}"></span></p>
+    <p><strong>支付方式：</strong> <span th:text="${order.paymentMethod}"></span></p>
+    <p><strong>配送地址：</strong> <span th:text="${order.shippingAddress}"></span></p>
+    <p><strong>下单时间：</strong> <span th:text="${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm')}"></span></p>
+    <p><strong>更新时间：</strong> <span th:text="${#dates.format(order.updateTime, 'yyyy-MM-dd HH:mm')}"></span></p>
+</div>
+
+<div th:if="${order}" class="order-items">
+    <h3>商品明细</h3>
+    <div th:each="item : ${order.orderItems}" class="order-item">
+        <div><strong th:text="${item.musicTitle}"></strong></div>
+        <div style="color: #666;">
+            歌手：<span th:text="${item.artist}"></span> |
+            单价：￥<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}"></span> |
+            数量：<span th:text="${item.quantity}"></span> |
+            小计：￥<span th:text="${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}"></span>
+        </div>
+    </div>
+
+    <div class="total">
+        订单总额：￥<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span>
+    </div>
+</div>
+
+<div style="text-align: center;">
+    <a th:href="@{/order/list}" class="btn btn-primary">返回订单列表</a>
+    <a th:href="@{/music/list}" class="btn btn-primary">继续购物</a>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>订单管理 - 音乐商店</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { margin-bottom: 20px; }
+        .stats { display: flex; margin-bottom: 20px; }
+        .stat-item { flex: 1; text-align: center; padding: 15px; margin: 0 5px; border-radius: 5px; }
+        .pending { background: #fff3cd; border: 1px solid #ffeaa7; }
+        .paid { background: #d1ecf1; border: 1px solid #bee5eb; }
+        .completed { background: #d4edda; border: 1px solid #c3e6cb; }
+        .order-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .order-table th, .order-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .order-table th { background: #f8f9fa; }
+        .btn { padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-sm { padding: 3px 8px; font-size: 12px; }
+        .search-form { margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px; }
+        .status-pending { color: #856404; background: #fff3cd; padding: 3px 8px; border-radius: 3px; }
+        .status-paid { color: #0c5460; background: #d1ecf1; padding: 3px 8px; border-radius: 3px; }
+        .status-completed { color: #155724; background: #d4edda; padding: 3px 8px; border-radius: 3px; }
+        .status-cancelled { color: #721c24; background: #f8d7da; padding: 3px 8px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <a th:href="@{/music/list}">← 返回首页</a>
+    <h1>订单管理</h1>
+</div>
+
+<div class="stats">
+    <div class="stat-item pending">
+        <h3 th:text="${pendingCount}">0</h3>
+        <p>待处理订单</p>
+    </div>
+    <div class="stat-item paid">
+        <h3 th:text="${paidCount}">0</h3>
+        <p>已支付订单</p>
+    </div>
+    <div class="stat-item completed">
+        <h3 th:text="${completedCount}">0</h3>
+        <p>已完成订单</p>
+    </div>
+</div>
+
+<div class="search-form">
+    <form method="get">
+        <select name="status">
+            <option value="">所有状态</option>
+            <option value="pending">待处理</option>
+            <option value="paid">已支付</option>
+            <option value="completed">已完成</option>
+            <option value="cancelled">已取消</option>
+        </select>
+        <input type="text" name="username" placeholder="用户名">
+        <button type="submit" class="btn btn-primary">搜索</button>
+        <a th:href="@{/order/admin}" class="btn">重置</a>
+    </form>
+</div>
+
+<table class="order-table">
+    <thead>
+    <tr>
+        <th>订单号</th>
+        <th>用户</th>
+        <th>总金额</th>
+        <th>状态</th>
+        <th>支付方式</th>
+        <th>创建时间</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${orders}">
+        <td>
+            <a th:href="@{'/order/detail/' + ${order.id}}" th:text="${order.orderNumber}"></a>
+        </td>
+        <td th:text="${order.username}"></td>
+        <td>￥<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span></td>
+        <td>
+            <span th:class="'status-' + ${order.status}" th:text="${order.status}"></span>
+        </td>
+        <td th:text="${order.paymentMethod}"></td>
+        <td th:text="${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm')}"></td>
+        <td>
+            <div th:if="${order.status == 'pending'}">
+                <form th:action="@{/order/admin/updateStatus}" method="post" style="display: inline;">
+                    <input type="hidden" name="orderId" th:value="${order.id}">
+                    <input type="hidden" name="status" value="paid">
+                    <button type="submit" class="btn btn-success btn-sm">标记为已支付</button>
+                </form>
+                <form th:action="@{/order/admin/updateStatus}" method="post" style="display: inline;">
+                    <input type="hidden" name="orderId" th:value="${order.id}">
+                    <input type="hidden" name="status" value="cancelled">
+                    <button type="submit" class="btn btn-danger btn-sm">取消订单</button>
+                </form>
+            </div>
+            <div th:if="${order.status == 'paid'}">
+                <form th:action="@{/order/admin/updateStatus}" method="post" style="display: inline;">
+                    <input type="hidden" name="orderId" th:value="${order.id}">
+                    <input type="hidden" name="status" value="completed">
+                    <button type="submit" class="btn btn-success btn-sm">完成订单</button>
+                </form>
+            </div>
+            <a th:href="@{'/order/admin/delete/' + ${order.id}}" class="btn btn-danger btn-sm"
+               onclick="return confirm('确定要删除这个订单吗？')">删除</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:if="${orders == null or orders.isEmpty()}">
+    <p style="text-align: center; color: #666;">暂无订单</p>
+</div>
+</body>
+</html>

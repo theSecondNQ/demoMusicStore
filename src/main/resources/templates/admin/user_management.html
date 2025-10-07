@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理 - 音乐商店</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .header { margin-bottom: 20px; }
+        .user-table { width: 100%; border-collapse: collapse; }
+        .user-table th, .user-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .user-table th { background: #f8f9fa; }
+        .btn { padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-primary { background: #007bff; color: white; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <a th:href="@{/music/list}">← 返回首页</a>
+    <h1>用户管理</h1>
+</div>
+
+<table class="user-table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>用户名</th>
+        <th>角色</th>
+        <th>注册时间</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.role}"></td>
+        <td th:text="${#dates.format(user.createTime, 'yyyy-MM-dd HH:mm')}"></td>
+        <td>
+            <form th:action="@{'/admin/users/delete/' + ${user.id}}" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-danger"
+                        th:if="${user.role != 'admin'}"
+                        th:attr="onclick='return confirm(\'确定要删除用户 ' + ${user.username} + ' 吗？\')'">
+                    删除
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div style="margin-top: 20px;">
+    <a th:href="@{/admin/categories}" class="btn btn-primary">分类管理</a>
+</div>
+</body>
+</html>

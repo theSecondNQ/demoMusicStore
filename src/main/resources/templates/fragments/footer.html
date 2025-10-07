@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="footer">
+    <footer style="margin-top: 50px; padding: 20px; background: #f8f9fa; border-top: 1px solid #dee2e6; text-align: center;">
+        <div th:if="${siteInfo}">
+            <h4 th:text="${siteInfo.siteName}">音乐商店</h4>
+            <p>
+                <span th:if="${siteInfo.customerServicePhone}">
+                    客服电话：<span th:text="${siteInfo.customerServicePhone}"></span> |
+                </span>
+                <span th:if="${siteInfo.email}">
+                    邮箱：<span th:text="${siteInfo.email}"></span> |
+                </span>
+                <span th:if="${siteInfo.address}">
+                    地址：<span th:text="${siteInfo.address}"></span>
+                    <span th:if="${siteInfo.zipCode}">（邮编：<span th:text="${siteInfo.zipCode}"></span>）</span>
+                </span>
+            </p>
+            <p th:if="${siteInfo.aboutUs}" th:text="${siteInfo.aboutUs}"></p>
+            <p th:if="${siteInfo.copyright}" th:text="${siteInfo.copyright}"></p>
+        </div>
+        <div th:unless="${siteInfo}">
+            <p>© 2025 音乐商店 版权所有</p>
+        </div>
+    </footer>
+</div>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>分类管理 - 音乐商店</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .header { margin-bottom: 20px; }
+        .category-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .category-table th, .category-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .category-table th { background: #f8f9fa; }
+        .btn { padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-danger { background: #dc3545; color: white; }
+        .add-form { margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px; }
+        .form-group { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <a th:href="@{/music/list}">← 返回首页</a>
+    <h1>分类管理</h1>
+</div>
+
+<div class="add-form">
+    <h3>添加新分类</h3>
+    <form th:action="@{/admin/categories/add}" method="post">
+        <div class="form-group">
+            <label for="name">分类名称：</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="description">分类描述：</label>
+            <input type="text" id="description" name="description">
+        </div>
+        <button type="submit" class="btn btn-success">添加分类</button>
+    </form>
+</div>
+
+<table class="category-table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>分类名称</th>
+        <th>描述</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="category : ${categories}">
+        <td th:text="${category.id}"></td>
+        <td th:text="${category.name}"></td>
+        <td th:text="${category.description}"></td>
+        <td>
+            <!-- 使用数据属性代替内联onclick -->
+            <button type="button" class="btn btn-warning btn-sm edit-btn"
+                    th:data-id="${category.id}"
+                    th:data-name="${category.name}"
+                    th:data-description="${category.description}">
+                编辑
+            </button>
+            <a th:href="@{'/admin/categories/delete/' + ${category.id}}" class="btn btn-danger btn-sm"
+               onclick="return confirm('确定要删除这个分类吗？删除后相关音乐的分类将变为空。')">
+                删除
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- 编辑分类的模态框 -->
+<div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 5px; width: 400px;">
+        <h3>编辑分类</h3>
+        <form id="editForm" method="post">
+            <input type="hidden" id="editId" name="id">
+            <div class="form-group">
+                <label for="editName">分类名称：</label>
+                <input type="text" id="editName" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="editDescription">分类描述：</label>
+                <input type="text" id="editDescription" name="description">
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button type="submit" class="btn btn-primary">保存修改</button>
+                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // 为所有编辑按钮添加点击事件监听器
+    document.addEventListener('DOMContentLoaded', function() {
+        var editButtons = document.querySelectorAll('.edit-btn');
+        editButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var id = this.getAttribute('data-id');
+                var name = this.getAttribute('data-name');
+                var description = this.getAttribute('data-description');
+                editCategory(id, name, description);
+            });
+        });
+    });
+
+    function editCategory(id, name, description) {
+        document.getElementById('editId').value = id;
+        document.getElementById('editName').value = name;
+        document.getElementById('editDescription').value = description || '';
+        document.getElementById('editModal').style.display = 'block';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    // 设置编辑表单的提交地址
+    document.getElementById('editForm').action = '/admin/categories/update';
+
+    // 点击模态框背景关闭
+    document.getElementById('editModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeEditModal();
+        }
+    });
+</script>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

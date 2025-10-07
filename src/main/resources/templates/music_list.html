@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>音乐列表 - 音乐商店</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { background: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .user-info { float: right; }
+        .search-form { margin: 20px 0; }
+        .music-list { list-style: none; padding: 0; }
+        .music-item { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+        .music-title { font-size: 18px; font-weight: bold; }
+        .music-info { color: #666; margin: 5px 0; }
+        .actions { margin-top: 10px; }
+        .btn { padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .favourite { color: red; }
+        .admin-actions { margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>🎵 音乐商店</h1>
+
+    <div class="user-info">
+        <div th:if="${session.user}">
+            欢迎，<span th:text="${session.user.username}"></span>！
+            <a th:href="@{/profile}" class="btn btn-primary">个人中心</a>
+            <a th:href="@{/favourite/list}" class="btn btn-primary">我的收藏</a>
+            <a th:href="@{/cart/list}" class="btn btn-primary">购物车</a>
+            <a th:if="${session.user.role != 'admin'}" th:href="@{/order/list}" class="btn btn-primary">我的订单</a>
+            <a th:href="@{/logout}" class="btn btn-danger">退出</a>
+        </div>
+        <div th:unless="${session.user}">
+            <a th:href="@{/login}" class="btn btn-primary">登录</a>
+            <a th:href="@{/register}" class="btn btn-success">注册</a>
+        </div>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+
+<form method="get" class="search-form">
+    <input type="text" name="keyword" placeholder="搜索歌曲、歌手或专辑..." th:value="${keyword}">
+    <select name="category">
+        <option value="">所有分类</option>
+        <option th:each="c : ${categories}"
+                th:value="${c.name}"
+                th:text="${c.name}"
+                th:selected="${category == c.name}">
+        </option>
+    </select>
+    <button type="submit" class="btn btn-primary">搜索</button>
+    <a th:href="@{/music/list}" class="btn">重置</a>
+</form>
+
+<div th:if="${musicList}">
+    <h2>音乐列表</h2>
+    <ul class="music-list">
+        <li th:each="music : ${musicList}" class="music-item">
+            <div class="music-title">
+                <a th:href="@{'/music/detail/' + ${music.id}}" th:text="${music.title}"></a>
+                <span th:if="${music.favourite}" class="favourite"> ♥</span>
+            </div>
+            <div class="music-info">
+                歌手：<span th:text="${music.artist}"></span> |
+                专辑：<span th:text="${music.album}"></span> |
+                分类：<span th:text="${music.categoryName}"></span> |
+                时长：<span th:text="${#numbers.formatInteger(music.duration/60, 1)}"></span>:<span th:text="${#numbers.formatInteger(music.duration%60, 2)}"></span> |
+                播放量：<span th:text="${music.playCount}"></span>
+            </div>
+            <div class="music-info">
+                价格：￥<span th:text="${#numbers.formatDecimal(music.price, 1, 2)}"></span>
+            </div>
+            <div class="actions" th:if="${session.user}">
+                <form th:action="@{'/favourite/add/' + ${music.id}}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-primary" th:disabled="${music.favourite}">
+                        <span th:if="${music.favourite}">已收藏</span>
+                        <span th:unless="${music.favourite}">收藏</span>
+                    </button>
+                </form>
+                <form th:action="@{/cart/add}" method="post" style="display: inline;">
+                    <input type="hidden" name="musicId" th:value="${music.id}">
+                    <input type="number" name="quantity" value="1" min="1" style="width: 60px;">
+                    <button type="submit" class="btn btn-success">加入购物车</button>
+                </form>
+                <div th:if="${session.user != null && session.user.role == 'admin'}" style="display: inline; margin-left: 10px;">
+                    <a th:href="@{'/music/edit/' + ${music.id}}" class="btn btn-warning btn-sm">编辑</a>
+                    <a th:href="@{'/music/delete/' + ${music.id}}" class="btn btn-danger btn-sm"
+                       onclick="return confirm('确定要删除这首音乐吗？')">删除</a>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<div th:if="${session.user != null && session.user.role == 'admin'}" class="admin-actions">
+    <h3>管理员功能</h3>
+    <a th:href="@{/music/add}" class="btn btn-primary">添加音乐</a>
+    <a th:href="@{/admin/categories}" class="btn btn-primary">分类管理</a>
+    <a th:href="@{/admin/users}" class="btn btn-primary">用户管理</a>
+    <a th:href="@{/order/admin}" class="btn btn-primary">订单管理</a>
+    <a th:href="@{/admin/site/info}" class="btn btn-primary">网站设置</a>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

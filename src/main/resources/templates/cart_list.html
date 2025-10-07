@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>购物车 - 音乐商店</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .header { margin-bottom: 20px; }
+        .cart-list { list-style: none; padding: 0; }
+        .cart-item { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+        .music-title { font-size: 18px; font-weight: bold; }
+        .music-info { color: #666; margin: 5px 0; }
+        .actions { margin-top: 10px; }
+        .btn { padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .total { font-size: 20px; font-weight: bold; margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; }
+        .empty-message { text-align: center; padding: 40px; color: #666; }
+        .quantity-input { width: 60px; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <a th:href="@{/music/list}">← 继续购物</a>
+    <h1 style="text-align: center;">购物车</h1>
+</div>
+
+<div th:if="${cartList != null and !cartList.isEmpty()}">
+    <ul class="cart-list">
+        <li th:each="item : ${cartList}" class="cart-item">
+            <div class="music-title" th:text="${item.title}"></div>
+            <div class="music-info">
+                歌手：<span th:text="${item.artist}"></span> |
+                专辑：<span th:text="${item.album}"></span> |
+                单价：￥<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}"></span>
+            </div>
+            <div class="music-info">
+                数量：
+                <form th:action="@{/cart/update}" method="post" style="display: inline;">
+                    <input type="hidden" name="cartId" th:value="${item.id}">
+                    <input type="number" name="quantity" th:value="${item.quantity}" min="1" class="quantity-input">
+                    <button type="submit" class="btn btn-primary">更新</button>
+                </form>
+            </div>
+            <div class="music-info">
+                小计：￥<span th:text="${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}"></span>
+            </div>
+            <div class="actions">
+                <a th:href="@{'/cart/delete/' + ${item.id}}" class="btn btn-danger"
+                   onclick="return confirm('确定要从购物车移除吗？')">删除</a>
+            </div>
+        </li>
+    </ul>
+
+    <div class="total">
+        总计：￥<span th:text="${#numbers.formatDecimal(total, 1, 2)}"></span>
+    </div>
+
+    <div class="actions" style="text-align: center;">
+        <a th:href="@{/cart/checkout}" class="btn btn-success" style="padding: 10px 20px; font-size: 16px;">
+            去结算
+        </a>
+    </div>
+</div>
+
+<div th:if="${cartList == null or cartList.isEmpty()}" class="empty-message">
+    <h3>购物车为空</h3>
+    <p>去 <a th:href="@{/music/list}">音乐列表</a> 添加喜欢的音乐吧！</p>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
