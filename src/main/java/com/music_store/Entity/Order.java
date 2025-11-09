@@ -7,7 +7,6 @@ import java.util.List;
  * 订单实体类
  * 对应一份订单中的各项数据
  */
-
 public class Order {
 
     /** 订单ID **/
@@ -22,7 +21,7 @@ public class Order {
     /** 用户名称 **/
     private String username;
 
-    /** 总数量 **/
+    /** 订单总金额 **/
     private Double totalAmount;
 
     /** 订单状态（pending, paid, completed, cancelled 四个订单状态） **/
@@ -31,13 +30,23 @@ public class Order {
     /** 支付方式 **/
     private String paymentMethod;
 
+    /** 收货地址 **/
     private String shippingAddress;
+
+    /** 订单创建时间 **/
     private Date createTime;
+
+    /** 订单更新时间 **/
     private Date updateTime;
 
+    /** 订单项列表 **/
     private List<OrderItem> orderItems;
 
+
+    //无参构造函数
     public Order() {}
+
+    //Getter和Setter
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }

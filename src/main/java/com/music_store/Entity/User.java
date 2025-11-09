@@ -2,17 +2,41 @@ package com.music_store.Entity;
 
 import java.util.Date;
 
+/**
+ * 用户实体类
+ * 存储音乐商店系统的用户账户信息
+ */
 public class User {
+
+    /** 用户ID **/
     private Integer id;
+
+    /** 用户名 **/
     private String username;
+
+    /** 登录密码 **/
     private String password;
+
+    /** 电子邮箱 **/
     private String email;
+
+    /** 用户角色 **/
     private String role;
+
+    /** 账户创建时间 **/
     private Date createTime;
 
+    //无参构造函数
     public User() {
     }
 
+    /**
+     * 有参构造函数
+     * @param username 用户名
+     * @param password 登录密码
+     * @param email 电子邮箱
+     * @param role 用户角色
+     */
     public User(String username, String password, String email, String role) {
         this.username = username;
         this.password = password;
@@ -20,6 +44,7 @@ public class User {
         this.role = role;
     }
 
+    //Getter和Setter方法
     public Integer getId() {
         return id;
     }
