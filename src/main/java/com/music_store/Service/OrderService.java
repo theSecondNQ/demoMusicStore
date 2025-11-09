@@ -39,6 +39,7 @@ public class OrderService {
         for (Cart cartItem : cartItems) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrderId(order.getId());
+            orderItem.setMusicTitle(cartItem.getTitle());
             orderItem.setMusicId(cartItem.getMusicId());
             orderItem.setPrice(cartItem.getPrice());
             orderItem.setQuantity(cartItem.getQuantity());

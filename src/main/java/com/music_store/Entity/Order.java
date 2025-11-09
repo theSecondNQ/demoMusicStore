@@ -3,14 +3,34 @@ package com.music_store.Entity;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 订单实体类
+ * 对应一份订单中的各项数据
+ */
+
 public class Order {
+
+    /** 订单ID **/
     private Integer id;
+
+    /** 订单编号 **/
     private String orderNumber;
+
+    /** 用户ID **/
     private Integer userId;
+
+    /** 用户名称 **/
     private String username;
+
+    /** 总数量 **/
     private Double totalAmount;
-    private String status; // pending, paid, completed, cancelled 四个订单状态
+
+    /** 订单状态（pending, paid, completed, cancelled 四个订单状态） **/
+    private String status;
+
+    /** 支付方式 **/
     private String paymentMethod;
+
     private String shippingAddress;
     private Date createTime;
     private Date updateTime;
