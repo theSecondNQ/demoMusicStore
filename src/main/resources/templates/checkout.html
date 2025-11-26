@@ -2,66 +2,107 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>结算 - 音乐商店</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        .order-summary { border: 1px solid #ddd; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
-        .order-item { padding: 10px 0; border-bottom: 1px solid #eee; }
-        .total { font-size: 20px; font-weight: bold; margin: 20px 0; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"], textarea, select {
-            width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;
-        }
-        textarea { height: 80px; }
-        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-success { background: #28a745; color: white; font-size: 16px; }
-        .btn-primary { background: #007bff; color: white; }
-    </style>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
 </head>
 <body>
-<div class="header">
-    <a th:href="@{/cart/list}">← 返回购物车</a>
-    <h1 style="text-align: center;">订单结算</h1>
-</div>
-
-<div class="order-summary">
-    <h3>订单明细</h3>
-    <div th:each="item : ${cartList}" class="order-item">
-        <div th:text="${item.title}"></div>
-        <div style="color: #666;">
-            数量：<span th:text="${item.quantity}"></span> ×
-            单价：￥<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}"></span> =
-            小计：￥<span th:text="${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}"></span>
+<!-- iOS风格头部 -->
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/music/list}" class="ios-brand">
+            音乐商店
+        </a>
+        <div class="ios-nav-items">
+            <a th:href="@{/cart/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">返回购物车</a>
+            <a th:href="@{/profile}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">个人中心</a>
         </div>
     </div>
+</header>
 
-    <div class="total">
-        订单总额：￥<span th:text="${#numbers.formatDecimal(total, 1, 2)}"></span>
+<div class="ios-container ios-fade-in">
+    <div class="ios-card">
+        <div style="padding: 20px;">
+            <h1 style="margin-bottom: 20px;">💳 订单结算</h1>
+
+            <div class="ios-card" style="background: var(--ios-gray-6); margin-bottom: 20px;">
+                <div style="padding: 20px;">
+                    <h3 style="margin-bottom: 16px;">📋 订单明细</h3>
+                    <div th:each="item : ${cartList}" style="padding: 12px 0; border-bottom: 1px solid var(--ios-gray-5);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 600;" th:text="${item.title}"></div>
+                                <div style="color: var(--ios-gray-1); font-size: 14px;">
+                                    数量：<span th:text="${item.quantity}"></span> ×
+                                    单价：￥<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}"></span>
+                                </div>
+                            </div>
+                            <div style="font-weight: 600;">
+                                ￥<span th:text="${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="padding-top: 16px; font-size: 18px; font-weight: 600; text-align: right;">
+                        订单总额：￥<span th:text="${#numbers.formatDecimal(total, 1, 2)}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <form th:action="@{/order/create}" method="post">
+                <div class="ios-form-group">
+                    <label class="ios-label">💳 支付方式：</label>
+                    <select name="paymentMethod" class="ios-select" required>
+                        <option value="">请选择支付方式</option>
+                        <option value="支付宝">支付宝</option>
+                        <option value="微信支付">微信支付</option>
+                        <option value="银行卡">银行卡</option>
+                        <option value="货到付款">货到付款</option>
+                    </select>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button type="submit" class="ios-btn ios-btn-success" style="padding: 16px 32px; font-size: 18px;">
+提交订单
+                    </button>
+                    <a th:href="@{/cart/list}" class="ios-btn ios-btn-primary" style="margin-left: 12px;">返回修改</a>
+                </div>
+            </form>
+
+            <div class="ios-card" style="background: var(--ios-gray-6); margin-top: 30px;">
+                <div style="padding: 16px;">
+<h4 style="margin-bottom: 8px;">订单说明</h4>
+                    <p style="margin-bottom: 8px; color: var(--ios-gray-1);">
+                        提交订单后，您可以在"我的订单"中查看订单状态。
+                    </p>
+                    <p style="color: var(--ios-gray-1);">
+                        订单状态包括：待处理 → 已支付 → 已完成。
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<form th:action="@{/order/create}" method="post">
-    <div class="form-group">
-        <label for="paymentMethod">支付方式：</label>
-        <select id="paymentMethod" name="paymentMethod" required>
-            <option value="">请选择支付方式</option>
-            <option value="支付宝">支付宝</option>
-            <option value="微信支付">微信支付</option>
-        </select>
+<!-- iOS风格页脚 -->
+<footer style="background: var(--blur-bg); backdrop-filter: blur(20px); padding: 20px; margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: white;">
+        <div th:if="${siteInfo}">
+            <h4 th:text="${siteInfo.siteName}" style="margin-bottom: 8px;"></h4>
+            <p style="margin-bottom: 8px;">
+                    <span th:if="${siteInfo.customerServicePhone}">
+                        客服电话：<span th:text="${siteInfo.customerServicePhone}"></span> ·
+                    </span>
+                <span th:if="${siteInfo.email}">
+                        邮箱：<span th:text="${siteInfo.email}"></span>
+                    </span>
+            </p>
+            <p th:if="${siteInfo.copyright}" th:text="${siteInfo.copyright}"></p>
+        </div>
+        <div th:unless="${siteInfo}">
+            <p>© 2025 音乐商店 版权所有</p>
+        </div>
     </div>
-
-    <div style="text-align: center;">
-        <button type="submit" class="btn btn-success">提交订单</button>
-        <a th:href="@{/cart/list}" class="btn btn-primary">返回修改</a>
-    </div>
-</form>
-
-<div style="margin-top: 30px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
-    <h4>订单说明：</h4>
-    <p>提交订单后，您可以在"我的订单"中查看订单状态。</p>
-    <p>订单状态包括：待处理 → 已支付 → 已完成。</p>
-</div>
-<div th:replace="fragments/footer :: footer"></div>
+</footer>
 </body>
 </html>

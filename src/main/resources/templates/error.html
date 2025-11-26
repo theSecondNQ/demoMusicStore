@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>发生错误 - 音乐商店</title>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
+    <style>
+        .error-box { margin: 24px auto; max-width: 800px; padding: 16px; border-radius: 12px; background: #ffecec; color: #a80000; }
+        .error-actions { margin-top: 12px; display: flex; gap: 8px; }
+    </style>
+</head>
+<body>
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/music/list}" class="ios-brand">音乐商店</a>
+    </div>
+</header>
+
+<div class="ios-container ios-fade-in">
+    <div class="ios-card">
+        <div class="error-box">
+            <h2>抱歉，发生了一个错误</h2>
+            <p th:if="${errorMessage}" th:text="${errorMessage}">服务繁忙，请稍后再试。</p>
+            <div class="error-actions">
+                <a th:href="@{/music/list}" class="ios-btn ios-btn-primary">返回音乐列表</a>
+                <a th:href="@{/}" class="ios-btn ios-btn-secondary">返回首页</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

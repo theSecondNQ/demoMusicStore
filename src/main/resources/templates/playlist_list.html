@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>我的歌单</title>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
+</head>
+<body>
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/music/list}" class="ios-brand">音乐商店</a>
+        <div class="ios-nav-items">
+            <a th:href="@{/playlist/create}" class="ios-btn ios-btn-primary">新建歌单</a>
+        </div>
+    </div>
+</header>
+<div class="ios-container">
+    <div class="ios-card" style="padding:16px;">
+        <h2>我的歌单</h2>
+        <div th:if="${#lists.isEmpty(playlists)}">尚无歌单，点击“新建歌单”开始吧。</div>
+        <ul th:unless="${#lists.isEmpty(playlists)}">
+            <li th:each="p : ${playlists}">
+                <a th:href="@{'/playlist/view/' + ${p.id}}" th:text="${p.name}"></a>
+                <span style="margin-left:8px;" th:text="${p.visibility == 'shared' ? '(共享)' : '(私有)'}"></span>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

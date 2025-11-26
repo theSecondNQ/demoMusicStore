@@ -14,6 +14,9 @@ public interface FavouriteDao {
     @Delete("DELETE FROM favourite WHERE user_id=#{userId} AND music_id=#{musicId}")
     int delete(@Param("userId") Integer userId, @Param("musicId") Integer musicId);
 
+    @Delete("DELETE FROM favourite WHERE music_id=#{musicId}")
+    int deleteByMusicId(Integer musicId);
+
     @Select("SELECT * FROM favourite WHERE user_id=#{userId} AND music_id=#{musicId}")
     Favourite selectByUserAndMusic(@Param("userId") Integer userId, @Param("musicId") Integer musicId);
 
@@ -21,7 +24,7 @@ public interface FavouriteDao {
             "FROM favourite f " +
             "JOIN music m ON f.music_id = m.id " +
             "LEFT JOIN category c ON m.category_id = c.id " +
-            "WHERE f.user_id=#{userId} " +
+            "WHERE f.user_id=#{userId} AND IFNULL(m.deleted,0)=0 " +
             "ORDER BY f.create_time DESC")
     List<Favourite> selectByUserId(Integer userId);
 

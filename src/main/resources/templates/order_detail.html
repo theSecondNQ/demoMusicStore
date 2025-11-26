@@ -2,58 +2,242 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>订单详情 - 音乐商店</title>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        .header { margin-bottom: 20px; }
-        .order-info, .order-items { border: 1px solid #ddd; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
-        .order-item { padding: 10px 0; border-bottom: 1px solid #eee; }
-        .total { font-size: 18px; font-weight: bold; margin: 20px 0; }
-        .btn { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-primary { background: #007bff; color: white; }
-        .status-pending { color: #856404; background: #fff3cd; padding: 3px 8px; border-radius: 3px; }
-        .status-paid { color: #0c5460; background: #d1ecf1; padding: 3px 8px; border-radius: 3px; }
-        .status-completed { color: #155724; background: #d4edda; padding: 3px 8px; border-radius: 3px; }
-        .status-cancelled { color: #721c24; background: #f8d7da; padding: 3px 8px; border-radius: 3px; }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .order-number {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--ios-label);
+        }
+
+        .order-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: var(--ios-yellow);
+            color: var(--ios-dark-text);
+        }
+
+        .status-paid {
+            background: var(--ios-blue);
+            color: white;
+        }
+
+        .status-completed {
+            background: var(--ios-green);
+            color: white;
+        }
+
+        .status-cancelled {
+            background: var(--ios-red);
+            color: white;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .info-card {
+            background: var(--ios-gray-6);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: var(--ios-gray-1);
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .items-list {
+            margin-bottom: 24px;
+        }
+
+        .item-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--ios-gray-6);
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .item-meta {
+            color: var(--ios-gray-1);
+            font-size: 14px;
+        }
+
+        .item-price {
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .total-section {
+            background: var(--ios-gray-6);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .total-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--ios-green);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body>
-<div class="header">
-    <a th:href="@{/order/list}">← 返回订单列表</a>
-    <h1>订单详情</h1>
-</div>
-
-<div th:if="${order}" class="order-info">
-    <h3>订单信息</h3>
-    <p><strong>订单号：</strong> <span th:text="${order.orderNumber}"></span></p>
-    <p><strong>订单状态：</strong> <span th:class="'status-' + ${order.status}" th:text="${order.status}"></span></p>
-    <p><strong>支付方式：</strong> <span th:text="${order.paymentMethod}"></span></p>
-    <p><strong>配送地址：</strong> <span th:text="${order.shippingAddress}"></span></p>
-    <p><strong>下单时间：</strong> <span th:text="${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm')}"></span></p>
-    <p><strong>更新时间：</strong> <span th:text="${#dates.format(order.updateTime, 'yyyy-MM-dd HH:mm')}"></span></p>
-</div>
-
-<div th:if="${order}" class="order-items">
-    <h3>商品明细</h3>
-    <div th:each="item : ${order.orderItems}" class="order-item">
-        <div><strong th:text="${item.musicTitle}"></strong></div>
-        <div style="color: #666;">
-            歌手：<span th:text="${item.artist}"></span> |
-            单价：￥<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}"></span> |
-            数量：<span th:text="${item.quantity}"></span> |
-            小计：￥<span th:text="${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}"></span>
+<!-- iOS风格头部 -->
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/music/list}" class="ios-brand">
+            音乐商店
+        </a>
+        <div class="ios-nav-items">
+            <a th:href="@{/order/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">返回订单列表</a>
+            <div th:if="${session.user}">
+                <span style="color: white; margin-right: 12px;" th:text="${session.user.username}"></span>
+                <a th:href="@{/logout}" class="ios-btn ios-btn-sm ios-btn-danger">退出</a>
+            </div>
         </div>
     </div>
+</header>
 
-    <div class="total">
-        订单总额：￥<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span>
+<div class="ios-container ios-fade-in">
+    <div class="ios-card">
+        <div style="padding: 20px;">
+            <div class="order-header">
+    <h1>订单详情</h1>
+                <div th:if="${order}">
+                    <div class="order-number" th:text="'订单号: ' + ${order.orderNumber}"></div>
+                    <div th:class="'order-status status-' + ${order.status}" th:text="${order.status}"></div>
+                </div>
+            </div>
+
+            <div th:if="${order}">
+                <!-- 订单信息 -->
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-label">💳 支付方式</div>
+                        <div class="info-value" th:text="${order.paymentMethod}"></div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">📍 配送地址</div>
+                        <div class="info-value" th:text="${order.shippingAddress}"></div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">📅 下单时间</div>
+                        <div class="info-value" th:text="${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm')}"></div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">🔄 更新时间</div>
+                        <div class="info-value" th:text="${#dates.format(order.updateTime, 'yyyy-MM-dd HH:mm')}"></div>
+                    </div>
+                </div>
+
+                <!-- 商品明细 -->
+                <h3 style="margin-bottom: 16px;">📋 商品明细</h3>
+                <div class="items-list">
+                    <div th:each="item : ${order.orderItems}" class="item-card">
+                        <div class="item-info">
+                            <div class="item-title" th:text="${item.musicTitle}"></div>
+                            <div class="item-meta">
+                                歌手：<span th:text="${item.artist}"></span> ·
+                                单价：￥<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}"></span> ·
+                                数量：<span th:text="${item.quantity}"></span>
+                            </div>
+                        </div>
+                        <div class="item-price">
+                            ￥<span th:text="${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 订单总额 -->
+                <div class="total-section">
+                    <div class="info-label">订单总额</div>
+                    <div class="total-amount">
+                        ￥<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="action-buttons">
+                    <a th:href="@{/order/list}" class="ios-btn ios-btn-primary">返回订单列表</a>
+                    <a th:href="@{/music/list}" class="ios-btn ios-btn-success">继续购物</a>
+                </div>
+            </div>
+
+            <div th:unless="${order}" style="text-align: center; padding: 40px; color: var(--ios-gray-2);">
+                <div style="font-size: 48px; margin-bottom: 16px;">❓</div>
+                <h3>订单不存在</h3>
+                <p>您访问的订单不存在或已被删除</p>
+                <a th:href="@{/order/list}" class="ios-btn ios-btn-primary" style="margin-top: 16px;">返回订单列表</a>
+            </div>
+        </div>
     </div>
 </div>
 
-<div style="text-align: center;">
-    <a th:href="@{/order/list}" class="btn btn-primary">返回订单列表</a>
-    <a th:href="@{/music/list}" class="btn btn-primary">继续购物</a>
-</div>
-<div th:replace="fragments/footer :: footer"></div>
+<!-- iOS风格页脚 -->
+<footer style="background: var(--blur-bg); backdrop-filter: blur(20px); padding: 20px; margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: white;">
+        <div th:if="${siteInfo}">
+            <h4 th:text="${siteInfo.siteName}" style="margin-bottom: 8px;"></h4>
+            <p style="margin-bottom: 8px;">
+                    <span th:if="${siteInfo.customerServicePhone}">
+                        客服电话：<span th:text="${siteInfo.customerServicePhone}"></span> ·
+                    </span>
+                <span th:if="${siteInfo.email}">
+                        邮箱：<span th:text="${siteInfo.email}"></span>
+                    </span>
+            </p>
+            <p th:if="${siteInfo.copyright}" th:text="${siteInfo.copyright}"></p>
+        </div>
+        <div th:unless="${siteInfo}">
+            <p>© 2025 音乐商店 版权所有</p>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

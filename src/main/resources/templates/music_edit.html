@@ -2,76 +2,150 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>编辑音乐 - 音乐商店</title>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"], input[type="number"], select, textarea {
-            width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;
+        .form-section {
+            margin-bottom: 24px;
         }
-        textarea { height: 80px; }
-        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-primary { background: #007bff; color: white; }
-        .btn-secondary { background: #6c757d; color: white; }
-        .btn-danger { background: #dc3545; color: white; }
+
+        .form-section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--ios-label);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .delete-section {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--ios-gray-5);
+        }
     </style>
 </head>
 <body>
-<div class="header">
-    <a th:href="@{/music/list}">← 返回音乐列表</a>
-    <h1>编辑音乐</h1>
+<!-- iOS风格头部 -->
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/music/list}" class="ios-brand">
+            音乐商店
+        </a>
+        <div class="ios-nav-items">
+            <a th:href="@{/music/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">返回列表</a>
+            <div th:if="${session.user}">
+                <span style="color: white; margin-right: 12px;" th:text="${session.user.username}"></span>
+                <a th:href="@{/logout}" class="ios-btn ios-btn-sm ios-btn-danger">退出</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="ios-container ios-fade-in">
+    <div class="ios-card">
+        <div style="padding: 20px;">
+    <h1 style="margin-bottom: 24px;">编辑音乐</h1>
+
+            <form th:action="@{/music/edit}" method="post" th:object="${music}">
+                <input type="hidden" th:field="*{id}">
+
+                <div class="form-section">
+    <div class="form-section-title">基本信息</div>
+                    <div class="ios-form-group">
+                        <label class="ios-label">歌曲名称</label>
+                        <input type="text" th:field="*{title}" class="ios-input" placeholder="请输入歌曲名称" required>
+                    </div>
+
+                    <div class="ios-form-group">
+                        <label class="ios-label">歌手</label>
+                        <input type="text" th:field="*{artist}" class="ios-input" placeholder="请输入歌手名称" required>
+                    </div>
+
+                    <div class="ios-form-group">
+                        <label class="ios-label">分类</label>
+                        <select th:field="*{categoryId}" class="ios-select" required>
+                            <option value="">请选择分类</option>
+                            <option th:each="category : ${categories}"
+                                    th:value="${category.id}"
+                                    th:text="${category.name}"
+                                    th:selected="${music.categoryId == category.id}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+    <div class="form-section-title">详细信息</div>
+                    <div class="ios-form-group">
+                        <label class="ios-label">专辑</label>
+                        <input type="text" th:field="*{album}" class="ios-input" placeholder="请输入专辑名称">
+                    </div>
+
+                    <div class="ios-form-group">
+                        <label class="ios-label">时长（秒）</label>
+                        <input type="number" th:field="*{duration}" class="ios-input" min="1" placeholder="请输入歌曲时长（秒）" required>
+                    </div>
+
+                    <div class="ios-form-group">
+                        <label class="ios-label">价格</label>
+                        <input type="number" th:field="*{price}" class="ios-input" min="0" step="0.01" placeholder="0.00" required>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="ios-btn ios-btn-success">
+                        <span style="margin-right: 6px;">💾</span> 保存修改
+                    </button>
+                    <a th:href="@{/music/list}" class="ios-btn ios-btn-secondary">取消</a>
+                </div>
+            </form>
+
+            <div class="delete-section">
+    <div class="form-section-title" style="color: var(--ios-red);">危险操作</div>
+                <div style="text-align: center;">
+                    <a th:href="@{'/music/delete/' + ${music.id}}" class="ios-btn ios-btn-danger"
+                       onclick="return confirm('确定要删除这首音乐吗？此操作不可恢复！')">
+    删除音乐
+                    </a>
+                    <p style="margin-top: 8px; color: var(--ios-gray-1); font-size: 14px;">
+                        删除后数据将无法恢复，请谨慎操作
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<form th:action="@{/music/edit}" method="post" th:object="${music}">
-    <input type="hidden" th:field="*{id}">
-
-    <div class="form-group">
-        <label for="title">歌曲名称：</label>
-        <input type="text" id="title" th:field="*{title}" required>
+<!-- iOS风格页脚 -->
+<footer style="background: var(--blur-bg); backdrop-filter: blur(20px); padding: 20px; margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: white;">
+        <div th:if="${siteInfo}">
+            <h4 th:text="${siteInfo.siteName}" style="margin-bottom: 8px;"></h4>
+            <p style="margin-bottom: 8px;">
+                    <span th:if="${siteInfo.customerServicePhone}">
+                        客服电话：<span th:text="${siteInfo.customerServicePhone}"></span> ·
+                    </span>
+                <span th:if="${siteInfo.email}">
+                        邮箱：<span th:text="${siteInfo.email}"></span>
+                    </span>
+            </p>
+            <p th:if="${siteInfo.copyright}" th:text="${siteInfo.copyright}"></p>
+        </div>
+        <div th:unless="${siteInfo}">
+            <p>© 2025 音乐商店 版权所有</p>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label for="artist">歌手：</label>
-        <input type="text" id="artist" th:field="*{artist}" required>
-    </div>
-
-    <div class="form-group">
-        <label for="categoryId">分类：</label>
-        <select id="categoryId" th:field="*{categoryId}" required>
-            <option value="">请选择分类</option>
-            <option th:each="category : ${categories}"
-                    th:value="${category.id}"
-                    th:text="${category.name}"
-                    th:selected="${music.categoryId == category.id}">
-            </option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="album">专辑：</label>
-        <input type="text" id="album" th:field="*{album}">
-    </div>
-
-    <div class="form-group">
-        <label for="duration">时长（秒）：</label>
-        <input type="number" id="duration" th:field="*{duration}" min="1" required>
-    </div>
-
-    <div class="form-group">
-        <label for="price">价格：</label>
-        <input type="number" id="price" th:field="*{price}" min="0" step="0.01" required>
-    </div>
-
-    <div style="text-align: center;">
-        <button type="submit" class="btn btn-primary">保存修改</button>
-        <a th:href="@{/music/list}" class="btn btn-secondary">取消</a>
-        <a th:href="@{'/music/delete/' + ${music.id}}" class="btn btn-danger"
-           onclick="return confirm('确定要删除这首音乐吗？此操作不可恢复！')">删除音乐</a>
-    </div>
-</form>
-
-<div th:replace="fragments/footer :: footer"></div>
+</footer>
 </body>
 </html>

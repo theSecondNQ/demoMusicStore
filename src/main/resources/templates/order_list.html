@@ -2,61 +2,80 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的订单 - 音乐商店</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; }
-        .header { margin-bottom: 20px; }
-        .order-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        .order-table th, .order-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        .order-table th { background: #f8f9fa; }
-        .btn { padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-primary { background: #007bff; color: white; }
-        .status-pending { color: #856404; background: #fff3cd; padding: 3px 8px; border-radius: 3px; }
-        .status-paid { color: #0c5460; background: #d1ecf1; padding: 3px 8px; border-radius: 3px; }
-        .status-completed { color: #155724; background: #d4edda; padding: 3px 8px; border-radius: 3px; }
-        .status-cancelled { color: #721c24; background: #f8d7da; padding: 3px 8px; border-radius: 3px; }
-        .empty-message { text-align: center; padding: 40px; color: #666; }
-    </style>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
 </head>
 <body>
-<div class="header">
-    <a th:href="@{/music/list}">← 返回首页</a>
-    <h1>我的订单</h1>
+<!-- iOS风格头部 -->
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/music/list}" class="ios-brand">
+            音乐商店
+        </a>
+        <div class="ios-nav-items">
+            <a th:href="@{/music/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">返回首页</a>
+            <a th:href="@{/profile}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">个人中心</a>
+        </div>
+    </div>
+</header>
+
+<div class="ios-container ios-fade-in">
+    <div class="ios-card">
+        <div style="padding: 20px;">
+    <h1 style="margin-bottom: 20px;">我的订单</h1>
+
+            <div th:if="${orders != null and not orders.isEmpty()}">
+                <div class="ios-list">
+                    <div th:each="order : ${orders}" class="ios-list-item">
+                        <div class="ios-list-item-content">
+                            <div class="ios-list-item-title" th:text="${order.orderNumber}"></div>
+                            <div class="ios-list-item-subtitle">
+                                总金额：￥<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span> ·
+                                支付方式：<span th:text="${order.paymentMethod}"></span> ·
+                                下单时间：<span th:text="${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm')}"></span>
+                            </div>
+                            <div style="margin-top: 8px;">
+                                    <span th:class="'ios-badge ' + ${order.status == 'pending' ? 'ios-badge-warning' : (order.status == 'paid' ? 'ios-badge-primary' : (order.status == 'completed' ? 'ios-badge-success' : 'ios-badge-danger'))}"
+                                          th:text="${order.status}">
+                                    </span>
+                            </div>
+                        </div>
+                        <div class="ios-list-item-actions">
+                            <a th:href="@{'/order/detail/' + ${order.id}}" class="ios-btn ios-btn-sm ios-btn-primary">查看详情</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${orders == null or orders.isEmpty()}" style="text-align: center; padding: 40px; color: var(--ios-gray-2);">
+    <div style="font-size: 16px; margin-bottom: 16px;">暂无订单</div>
+                <h3>暂无订单</h3>
+                <p>您还没有下过任何订单，去 <a th:href="@{/music/list}" class="ios-btn ios-btn-primary" style="margin-top: 16px;">音乐列表</a> 选购喜欢的音乐吧！</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div th:if="${orders != null and !orders.isEmpty()}">
-    <table class="order-table">
-        <thead>
-        <tr>
-            <th>订单号</th>
-            <th>总金额</th>
-            <th>状态</th>
-            <th>支付方式</th>
-            <th>创建时间</th>
-            <th>操作</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="order : ${orders}">
-            <td th:text="${order.orderNumber}"></td>
-            <td>￥<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span></td>
-            <td>
-                <span th:class="'status-' + ${order.status}" th:text="${order.status}"></span>
-            </td>
-            <td th:text="${order.paymentMethod}"></td>
-            <td th:text="${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm')}"></td>
-            <td>
-                <a th:href="@{'/order/detail/' + ${order.id}}" class="btn btn-primary">查看详情</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-
-<div th:if="${orders == null or orders.isEmpty()}" class="empty-message">
-    <h3>暂无订单</h3>
-    <p>您还没有下过任何订单，去 <a th:href="@{/music/list}">音乐列表</a> 选购喜欢的音乐吧！</p>
-</div>
-<div th:replace="fragments/footer :: footer"></div>
+<!-- iOS风格页脚 -->
+<footer style="background: var(--blur-bg); backdrop-filter: blur(20px); padding: 20px; margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: white;">
+        <div th:if="${siteInfo}">
+            <h4 th:text="${siteInfo.siteName}" style="margin-bottom: 8px;"></h4>
+            <p style="margin-bottom: 8px;">
+                    <span th:if="${siteInfo.customerServicePhone}">
+                        客服电话：<span th:text="${siteInfo.customerServicePhone}"></span> ·
+                    </span>
+                <span th:if="${siteInfo.email}">
+                        邮箱：<span th:text="${siteInfo.email}"></span>
+                    </span>
+            </p>
+            <p th:if="${siteInfo.copyright}" th:text="${siteInfo.copyright}"></p>
+        </div>
+        <div th:unless="${siteInfo}">
+            <p>© 2025 音乐商店 版权所有</p>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

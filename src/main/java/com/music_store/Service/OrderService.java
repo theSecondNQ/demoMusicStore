@@ -105,4 +105,9 @@ public class OrderService {
     public int getOrderCountByStatus(String status) {
         return orderDao.countByStatus(status);
     }
+
+    // 判断用户是否购买了某首音乐
+    public boolean hasPurchasedMusic(Integer userId, Integer musicId) {
+        return orderDao.countPurchasedMusic(userId, musicId) > 0;
+    }
 }

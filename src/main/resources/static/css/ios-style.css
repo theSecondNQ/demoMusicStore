@@ -1,0 +1,433 @@
+/* iOS风格全局样式 */
+:root {
+    --ios-blue: #007AFF;
+    --ios-gray-1: #8E8E93;
+    --ios-gray-2: #AEAEB2;
+    --ios-gray-3: #C7C7CC;
+    --ios-gray-4: #D1D1D6;
+    --ios-gray-5: #E5E5EA;
+    --ios-gray-6: #F2F2F7;
+    --ios-red: #FF3B30;
+    --ios-green: #34C759;
+    --ios-orange: #FF9500;
+    --ios-purple: #AF52DE;
+
+    --primary-color: var(--ios-blue);
+    --success-color: var(--ios-green);
+    --danger-color: var(--ios-red);
+    --warning-color: var(--ios-orange);
+
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --blur-bg: rgba(255, 255, 255, 0.7);
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    --border-radius: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: var(--ios-gray-1);
+    line-height: 1.4;
+}
+
+/* iOS风格容器 */
+.ios-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* iOS风格卡片 */
+.ios-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.ios-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* iOS风格头部 */
+.ios-header {
+    background: var(--blur-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 16px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.ios-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.ios-brand {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ios-nav-items {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* iOS风格按钮 */
+.ios-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--ios-gray-6);
+    color: var(--primary-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.ios-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.ios-btn:hover::before {
+    left: 100%;
+}
+
+.ios-btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.ios-btn-success {
+    background: var(--success-color);
+    color: white;
+}
+
+.ios-btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.ios-btn-warning {
+    background: var(--warning-color);
+    color: white;
+}
+
+.ios-btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.ios-btn-sm {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+.ios-btn:active {
+    transform: scale(0.98);
+}
+
+/* iOS风格表单 */
+.ios-form-group {
+    margin-bottom: 20px;
+}
+
+.ios-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--ios-gray-1);
+    font-size: 14px;
+}
+
+.ios-input {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid var(--ios-gray-5);
+    border-radius: 12px;
+    font-size: 16px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.ios-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
+.ios-select {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid var(--ios-gray-5);
+    border-radius: 12px;
+    font-size: 16px;
+    background: white;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 8px 10px;
+}
+
+/* iOS风格列表 */
+.ios-list {
+    list-style: none;
+}
+
+.ios-list-item {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--ios-gray-5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.3s ease;
+}
+
+.ios-list-item:last-child {
+    border-bottom: none;
+}
+
+.ios-list-item:hover {
+    background-color: var(--ios-gray-6);
+}
+
+.ios-list-item-content {
+    flex: 1;
+}
+
+.ios-list-item-title {
+    font-weight: 600;
+    font-size: 17px;
+    margin-bottom: 4px;
+}
+
+.ios-list-item-subtitle {
+    color: var(--ios-gray-1);
+    font-size: 15px;
+}
+
+.ios-list-item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* iOS风格表格 */
+.ios-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ios-table th,
+.ios-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--ios-gray-5);
+}
+
+.ios-table th {
+    font-weight: 600;
+    color: var(--ios-gray-1);
+    background: var(--ios-gray-6);
+}
+
+.ios-table tr:last-child td {
+    border-bottom: none;
+}
+
+.ios-table tr:hover {
+    background-color: var(--ios-gray-6);
+}
+
+/* iOS风格模态框 */
+.ios-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.ios-modal-content {
+    background: white;
+    border-radius: 14px;
+    padding: 0;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.ios-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--ios-gray-5);
+    text-align: center;
+}
+
+.ios-modal-body {
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.ios-modal-footer {
+    padding: 20px;
+    border-top: 1px solid var(--ios-gray-5);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* iOS风格标签 */
+.ios-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--ios-gray-5);
+    color: var(--ios-gray-1);
+}
+
+.ios-badge-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.ios-badge-success {
+    background: var(--success-color);
+    color: white;
+}
+
+.ios-badge-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+/* iOS风格搜索框 */
+.ios-search {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.ios-search-input {
+    width: 100%;
+    padding: 16px 16px 16px 48px;
+    border: 2px solid var(--ios-gray-5);
+    border-radius: 12px;
+    font-size: 16px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.ios-search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ios-gray-2);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .ios-container {
+        padding: 16px;
+    }
+
+    .ios-navbar {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .ios-nav-items {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .ios-table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ios-fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* 加载状态 */
+.ios-loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--ios-gray-4);
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日推荐 - 音乐商店</title>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
+    <style>
+        .daily-header {
+            position: relative;
+            height: 180px;
+            background: linear-gradient(135deg, var(--ios-orange), var(--ios-yellow));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .daily-header-content {
+            text-align: center;
+            z-index: 2;
+        }
+        
+        .daily-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        
+        .daily-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .daily-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .music-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .music-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .music-cover {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, var(--ios-purple), var(--ios-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .music-content {
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .music-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .favourite-icon {
+            color: var(--ios-red);
+        }
+        
+        .music-meta {
+            color: var(--ios-gray-1);
+            font-size: 14px;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .music-price {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--ios-green);
+            margin-bottom: 12px;
+        }
+        
+        .music-actions {
+            margin-top: auto;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--ios-gray-2);
+        }
+        
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+        
+        .player-section {
+            margin-top: 24px;
+            background: var(--ios-gray-6);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        
+        .now-playing {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 14px;
+        }
+        
+        .track-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .track-status {
+            color: var(--ios-gray-1);
+            font-size: 12px;
+        }
+        
+        .player-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .play-mode {
+            margin-left: auto;
+        }
+        
+        .audio-player {
+            width: 100%;
+            margin-top: 12px;
+            border-radius: 8px;
+        }
+        
+        .recommendation-info {
+            background: var(--ios-gray-6);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .recommendation-stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 12px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--ios-blue);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--ios-gray-1);
+            margin-top: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .music-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .player-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .player-buttons {
+                justify-content: center;
+            }
+            
+            .play-mode {
+                margin-left: 0;
+                margin-top: 12px;
+                text-align: center;
+            }
+            
+            .recommendation-stats {
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- iOS风格头部 -->
+    <header class="ios-header">
+        <div class="ios-navbar">
+            <a th:href="@{/music/list}" class="ios-brand">
+                音乐商店
+            </a>
+            <div class="ios-nav-items">
+                <a th:href="@{/music/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: var(--ios-gray-1); border-color: var(--ios-gray-3);">音乐列表</a>
+                <a th:href="@{/playlist/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: var(--ios-gray-1); border-color: var(--ios-gray-3);" th:if="${session.user}">我的歌单</a>
+                <a th:href="@{/login}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: var(--ios-gray-1); border-color: var(--ios-gray-3);" th:unless="${session.user}">登录</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="ios-container ios-fade-in">
+        <!-- 每日推荐头部 -->
+        <div class="daily-header">
+            <div class="daily-header-content">
+                <!-- 去除emoji图标 -->
+                <h1 class="daily-title">每日音乐推荐</h1>
+                <p class="daily-subtitle">根据您的喜好精心挑选</p>
+            </div>
+        </div>
+
+        <!-- 推荐信息 -->
+        <div class="recommendation-info">
+            <h3 style="margin-bottom: 8px;">今日精选</h3>
+            <p style="color: var(--ios-gray-1); margin-bottom: 12px;">为您精心挑选了 <span th:text="${dailyList != null ? dailyList.size() : 0}"></span> 首可能喜欢的音乐</p>
+            <div class="recommendation-stats">
+                <div class="stat-item">
+                    <div class="stat-number" th:text="${dailyList != null ? dailyList.size() : 0}">0</div>
+                    <div class="stat-label">推荐歌曲</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" th:text="${totalDuration}">0</div>
+                    <div class="stat-label">总时长(分钟)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" th:text="${totalPrice}">0</div>
+                    <div class="stat-label">总价值(元)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 音乐列表 -->
+        <div class="ios-card">
+            <div style="padding: 20px;">
+            <h2 style="margin-bottom: 20px;">推荐音乐</h2>
+
+                <div th:if="${dailyList != null and !dailyList.isEmpty()}">
+                    <div class="music-grid">
+                        <div th:each="music : ${dailyList}" class="ios-card music-card">
+                            <div class="music-cover">
+                                <span th:with="titleAbbr=${music.title != null ? (music.title.length() >= 2 ? music.title.substring(0, 2) : music.title) : '音乐'}">
+                                    <span th:text="${titleAbbr}"></span>
+                                </span>
+                            </div>
+                            <div class="music-content">
+                                <div class="music-title">
+                                    <a th:href="@{'/music/detail/' + ${music.id}}" th:text="${music.title}" data-role="track" th:attr="data-id=${music.id}"></a>
+                                    <span th:if="${music.favourite}" class="favourite-icon">♥</span>
+                                </div>
+                                <div class="music-meta">
+                                    <div>🎤 <span th:text="${music.artist}"></span></div>
+                    <div>专辑：<span th:text="${music.album}"></span></div>
+                                    <div>📚 <span th:text="${music.categoryName}"></span></div>
+                    <div>时长：
+                                        <span th:text="${#numbers.formatInteger(music.duration/60, 1)}"></span>:
+                                        <span th:text="${#numbers.formatInteger(music.duration%60, 2)}"></span>
+                                    </div>
+                    <div>播放量：<span th:text="${music.playCount}"></span> 次播放</div>
+                                </div>
+                                <div class="music-price">
+                                    ￥<span th:text="${#numbers.formatDecimal(music.price, 1, 2)}"></span>
+                                </div>
+
+                                <div class="music-actions" th:if="${session.user}">
+                                    <!-- 收藏按钮 -->
+                                    <form th:action="@{'/favourite/add/' + ${music.id}}" method="post" style="display: inline;">
+                                        <button type="submit" class="ios-btn ios-btn-sm"
+                                                th:classappend="${music.favourite} ? 'ios-btn-secondary' : 'ios-btn-primary'"
+                                                th:disabled="${music.favourite}">
+                    <span th:if="${music.favourite}">已收藏</span>
+                                            <span th:unless="${music.favourite}">🤍 收藏</span>
+                                        </button>
+                                    </form>
+
+                                    <!-- 加入购物车 -->
+                                    <form th:action="@{/cart/add}" method="post" style="display: inline;">
+                                        <input type="hidden" name="musicId" th:value="${music.id}">
+                                        <div style="display: flex; gap: 4px;">
+                                            <input type="number" name="quantity" value="1" min="1"
+                                                   style="width: 50px; padding: 4px; border: 1px solid var(--ios-gray-4); border-radius: 6px;">
+                    <button type="submit" class="ios-btn ios-btn-sm ios-btn-success">加入购物车</button>
+                                        </div>
+                                    </form>
+
+                                    <!-- 管理员操作 -->
+                                    <div th:if="${session.user != null && session.user.role == 'admin'}" style="display: flex; gap: 4px;">
+                    <a th:href="@{'/music/edit/' + ${music.id}}" class="ios-btn ios-btn-sm ios-btn-warning">编辑</a>
+                                        <a th:href="@{'/music/delete/' + ${music.id}}" class="ios-btn ios-btn-sm ios-btn-danger"
+                    onclick="return confirm('确定要删除这首音乐吗？')">删除</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${dailyList == null or dailyList.isEmpty()}" class="empty-state">
+            <div class="empty-icon">暂无推荐</div>
+                    <h3>今日暂无推荐</h3>
+                    <p>去 <a th:href="@{/music/list}" class="ios-btn ios-btn-primary" style="margin-top: 16px;">音乐列表</a> 浏览更多精彩。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 播放器 -->
+        <div th:if="${dailyList != null and !dailyList.isEmpty()}" class="player-section">
+            <h3 style="margin-bottom: 16px;">播放器</h3>
+            <div class="player-controls">
+                <div class="now-playing">
+                    <div class="track-title" id="nowPlaying">选择一首音乐开始播放</div>
+                    <div class="track-status" id="playStatus">未播放</div>
+                </div>
+                <div class="player-buttons">
+                    <button id="btnPrev" class="ios-btn ios-btn-sm ios-btn-secondary">⏮</button>
+            <button id="btnPlay" class="ios-btn ios-btn-sm ios-btn-success">播放</button>
+                    <button id="btnNext" class="ios-btn ios-btn-sm ios-btn-secondary">⏭</button>
+                </div>
+                <div class="play-mode">
+                    <button id="btnMode" class="ios-btn ios-btn-sm ios-btn-outline" title="切换播放模式">🔁 顺序播放</button>
+                </div>
+            </div>
+            <audio id="audio" preload="none" class="audio-player" controls></audio>
+        </div>
+    </div>
+
+    <!-- iOS风格页脚 -->
+    <footer style="background: var(--blur-bg); backdrop-filter: blur(20px); padding: 20px; margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+        <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: white;">
+            <div th:if="${siteInfo}">
+                <h4 th:text="${siteInfo.siteName}" style="margin-bottom: 8px;"></h4>
+                <p style="margin-bottom: 8px;">
+                    <span th:if="${siteInfo.customerServicePhone}">
+                        客服电话：<span th:text="${siteInfo.customerServicePhone}"></span> · 
+                    </span>
+                    <span th:if="${siteInfo.email}">
+                        邮箱：<span th:text="${siteInfo.email}"></span>
+                    </span>
+                </p>
+                <p th:if="${siteInfo.copyright}" th:text="${siteInfo.copyright}"></p>
+            </div>
+            <div th:unless="${siteInfo}">
+                <p>© 2025 音乐商店 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function(){
+            window.PLAYLIST = Array.from(document.querySelectorAll('a[data-role="track"]')).map(a => ({
+                id: parseInt(a.getAttribute('data-id')), 
+                title: a.textContent.trim()
+            }));
+        });
+        /*]]>*/
+    </script>
+    <script src="/js/player.js"></script>
+</body>
+</html>

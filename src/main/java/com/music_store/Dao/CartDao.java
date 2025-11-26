@@ -20,9 +20,12 @@ public interface CartDao {
     @Delete("DELETE FROM cart WHERE user_id=#{userId} AND music_id=#{musicId}")
     int deleteByUserAndMusic(@Param("userId") Integer userId, @Param("musicId") Integer musicId);
 
+    @Delete("DELETE FROM cart WHERE music_id=#{musicId}")
+    int deleteByMusic(Integer musicId);
+
     @Select("SELECT c.*, m.title, m.artist, m.price, m.album FROM cart c " +
             "JOIN music m ON c.music_id = m.id " +
-            "WHERE c.user_id=#{userId}")
+            "WHERE c.user_id=#{userId} AND IFNULL(m.deleted,0)=0")
     List<Cart> selectByUserId(Integer userId);
 
     @Select("SELECT * FROM cart WHERE user_id=#{userId} AND music_id=#{musicId}")

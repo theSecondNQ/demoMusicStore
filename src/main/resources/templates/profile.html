@@ -2,114 +2,120 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>个人中心 - 音乐商店</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        .header { margin-bottom: 20px; }
-        .profile-section, .password-section {
-            border: 1px solid #ddd;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"], input[type="email"], input[type="password"] {
-            width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;
-        }
-        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-primary { background: #007bff; color: white; }
-        .btn-success { background: #28a745; color: white; }
-        .success-msg { color: green; margin-bottom: 15px; padding: 10px; background: #d4edda; border-radius: 4px; }
-        .error-msg { color: red; margin-bottom: 15px; padding: 10px; background: #f8d7da; border-radius: 4px; }
-        .info-msg { color: #856404; margin-bottom: 15px; padding: 10px; background: #fff3cd; border-radius: 4px; }
-        .user-info { margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px; }
-    </style>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
 </head>
 <body>
-<div class="header">
-    <a th:href="@{/music/list}">← 返回首页</a>
-    <h1>个人中心</h1>
-</div>
-
-<!-- 成功消息 -->
-<div th:if="${success}" class="success-msg" th:text="${success}"></div>
-
-<!-- 错误消息 -->
-<div th:if="${msg}" class="error-msg" th:text="${msg}"></div>
-
-<div class="user-info" th:if="${user}">
-    <h3>基本信息</h3>
-    <p><strong>用户名：</strong> <span th:text="${user.username}">未知用户</span></p>
-    <p><strong>角色：</strong> <span th:text="${user.role}">未知角色</span></p>
-    <p><strong>注册时间：</strong>
-        <span th:if="${user.createTime}" th:text="${#dates.format(user.createTime, 'yyyy-MM-dd HH:mm')}">未知时间</span>
-        <span th:unless="${user.createTime}">未知时间</span>
-    </p>
-</div>
-
-<div class="profile-section" th:if="${user}">
-    <h3>修改个人信息</h3>
-    <form th:action="@{/updateProfile}" method="post">
-        <input type="hidden" name="id" th:value="${user.id}">
-        <input type="hidden" name="username" th:value="${user.username}">
-        <input type="hidden" name="role" th:value="${user.role}">
-
-        <div class="form-group">
-            <label for="email">邮箱：</label>
-            <input type="email" id="email" name="email" th:value="${user.email}">
+<!-- iOS风格头部 -->
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/music/list}" class="ios-brand">
+            音乐商店
+        </a>
+        <div class="ios-nav-items">
+            <a th:href="@{/music/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">返回首页</a>
+            <a th:href="@{/logout}" class="ios-btn ios-btn-sm ios-btn-danger">退出</a>
         </div>
+    </div>
+</header>
 
-        <button type="submit" class="btn btn-primary">更新信息</button>
-    </form>
-</div>
+<div class="ios-container ios-fade-in">
+    <div class="ios-card">
+        <div style="padding: 20px;">
+    <h1 style="margin-bottom: 20px;">个人中心</h1>
 
-<div class="password-section">
-    <h3>修改密码</h3>
+            <!-- 成功消息 -->
+            <div th:if="${success}" class="success-msg" th:text="${success}"></div>
 
-    <!-- 密码错误消息 -->
-    <div th:if="${passwordError}" class="error-msg" th:text="${passwordError}"></div>
+            <!-- 错误消息 -->
+            <div th:if="${msg}" class="error-msg" th:text="${msg}"></div>
 
-    <form th:action="@{/changePassword}" method="post">
-        <div class="form-group">
-            <label for="oldPassword">原密码：</label>
-            <input type="password" id="oldPassword" name="oldPassword" required>
+            <div class="user-info">
+                <h3>基本信息</h3>
+                <p><strong>用户名：</strong> <span th:text="${user.username}"></span></p>
+                <p><strong>角色：</strong> <span th:text="${user.role}"></span></p>
+                <p><strong>注册时间：</strong> <span th:text="${#dates.format(user.createTime, 'yyyy-MM-dd HH:mm')}"></span></p>
+            </div>
+
+            <div class="profile-section">
+                <h3>📧 修改个人信息</h3>
+                <form th:action="@{/updateProfile}" method="post">
+                    <input type="hidden" name="id" th:value="${user.id}">
+                    <input type="hidden" name="username" th:value="${user.username}">
+                    <input type="hidden" name="role" th:value="${user.role}">
+
+                    <div class="ios-form-group">
+                        <label class="ios-label">邮箱：</label>
+                        <input type="email" name="email" class="ios-input" th:value="${user.email}">
+                    </div>
+
+                    <button type="submit" class="ios-btn ios-btn-primary">更新信息</button>
+                </form>
+            </div>
+
+            <div class="password-section">
+                <h3>🔒 修改密码</h3>
+
+                <!-- 密码错误消息 -->
+                <div th:if="${passwordError}" class="error-msg" th:text="${passwordError}"></div>
+
+                <form th:action="@{/changePassword}" method="post">
+                    <div class="ios-form-group">
+                        <label class="ios-label">原密码：</label>
+                        <input type="password" name="oldPassword" class="ios-input" required>
+                    </div>
+
+                    <div class="ios-form-group">
+                        <label class="ios-label">新密码：</label>
+                        <input type="password" name="newPassword" class="ios-input" required minlength="6">
+                    </div>
+
+                    <div class="ios-form-group">
+                        <label class="ios-label">确认新密码：</label>
+                        <input type="password" name="confirmPassword" class="ios-input" required minlength="6">
+                    </div>
+
+                    <button type="submit" class="ios-btn ios-btn-success">修改密码</button>
+                </form>
+
+                <div class="info-msg">
+                    <strong>密码要求：</strong>
+                    <ul>
+                        <li>新密码长度不能少于6位</li>
+                        <li>新密码和确认密码必须一致</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
+    <a th:href="@{/favorite/list}" class="ios-btn ios-btn-primary">我的收藏</a>
+    <a th:href="@{/order/list}" class="ios-btn ios-btn-primary" th:if="${user.role != 'admin'}">我的订单</a>
+    <a th:href="@{/cart/list}" class="ios-btn ios-btn-primary">购物车</a>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label for="newPassword">新密码：</label>
-            <input type="password" id="newPassword" name="newPassword" required minlength="6">
-        </div>
-
-        <div class="form-group">
-            <label for="confirmPassword">确认新密码：</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
-        </div>
-
-        <button type="submit" class="btn btn-success">修改密码</button>
-    </form>
-
-    <div class="info-msg">
-        <strong>密码要求：</strong>
-        <ul>
-            <li>新密码长度不能少于6位</li>
-            <li>新密码和确认密码必须一致</li>
-        </ul>
     </div>
 </div>
 
-<div style="margin-top: 20px;" th:if="${user}">
-    <a th:href="@{/favourite/list}" class="btn btn-primary">我的收藏</a>
-    <a th:href="@{/order/list}" class="btn btn-primary" th:if="${user.role != 'admin'}">我的订单</a>
-    <a th:href="@{/cart/list}" class="btn btn-primary">购物车</a>
-</div>
-
-<!-- 用户信息为空时的提示 -->
-<div th:unless="${user}" class="error-msg">
-    <h3>用户信息加载失败</h3>
-    <p>请<a th:href="@{/login}">重新登录</a>后访问个人中心。</p>
-</div>
-
-<div th:replace="fragments/footer :: footer"></div>
+<!-- iOS风格页脚 -->
+<footer style="background: var(--blur-bg); backdrop-filter: blur(20px); padding: 20px; margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: white;">
+        <div th:if="${siteInfo}">
+            <h4 th:text="${siteInfo.siteName}" style="margin-bottom: 8px;"></h4>
+            <p style="margin-bottom: 8px;">
+                    <span th:if="${siteInfo.customerServicePhone}">
+                        客服电话：<span th:text="${siteInfo.customerServicePhone}"></span> ·
+                    </span>
+                <span th:if="${siteInfo.email}">
+                        邮箱：<span th:text="${siteInfo.email}"></span>
+                    </span>
+            </p>
+            <p th:if="${siteInfo.copyright}" th:text="${siteInfo.copyright}"></p>
+        </div>
+        <div th:unless="${siteInfo}">
+            <p>© 2025 音乐商店 版权所有</p>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

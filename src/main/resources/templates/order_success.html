@@ -2,39 +2,191 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>订单提交成功 - 音乐商店</title>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; }
-        .success-icon { font-size: 60px; color: #28a745; margin: 20px 0; }
-        .order-info { background: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0; text-align: left; }
-        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; margin: 10px; }
-        .btn-primary { background: #007bff; color: white; }
-        .btn-success { background: #28a745; color: white; }
+        .success-container {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            color: var(--ios-green);
+            margin: 20px 0;
+        }
+
+        .order-summary {
+            background: var(--ios-gray-6);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: left;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--ios-gray-5);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .summary-label {
+            color: var(--ios-gray-1);
+        }
+
+        .summary-value {
+            font-weight: 600;
+        }
+
+        .total-amount {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--ios-green);
+        }
+
+        .next-steps {
+            background: var(--ios-blue-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 32px 0;
+            text-align: left;
+        }
+
+        .next-steps-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 16px 32px;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
-<div class="success-icon">✓</div>
-<h1>订单提交成功！</h1>
+<!-- iOS风格头部 -->
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/music/list}" class="ios-brand">
+            音乐商店
+        </a>
+        <div class="ios-nav-items">
+            <div th:if="${session.user}">
+                <span style="color: white; margin-right: 12px;" th:text="${session.user.username}"></span>
+                <a th:href="@{/logout}" class="ios-btn ios-btn-sm ios-btn-danger">退出</a>
+            </div>
+        </div>
+    </div>
+</header>
 
-<div class="order-info" th:if="${order}">
-    <h3>订单信息</h3>
-    <p><strong>订单号：</strong> <span th:text="${order.orderNumber}"></span></p>
-    <p><strong>订单金额：</strong> ￥<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span></p>
-    <p><strong>订单状态：</strong> <span th:text="${order.status}"></span></p>
-    <p><strong>支付方式：</strong> <span th:text="${order.paymentMethod}"></span></p>
-    <p><strong>配送地址：</strong> <span th:text="${order.shippingAddress}"></span></p>
-    <p><strong>下单时间：</strong> <span th:text="${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm')}"></span></p>
+<div class="ios-container ios-fade-in">
+    <div class="success-container">
+            <div class="success-icon">下单成功</div>
+        <h1 style="margin-bottom: 16px;">订单提交成功！</h1>
+        <p style="font-size: 18px; color: var(--ios-gray-1); margin-bottom: 32px;">
+            感谢您的购买，我们会尽快处理您的订单
+        </p>
+
+        <div th:if="${order}" class="order-summary">
+            <h3 style="margin-bottom: 20px; text-align: center;">📋 订单信息</h3>
+
+            <div class="summary-item">
+                <span class="summary-label">订单号</span>
+                <span class="summary-value" th:text="${order.orderNumber}"></span>
+            </div>
+
+            <div class="summary-item">
+                <span class="summary-label">订单金额</span>
+                <span class="summary-value total-amount">
+                        ￥<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 2)}"></span>
+                    </span>
+            </div>
+
+            <div class="summary-item">
+                <span class="summary-label">订单状态</span>
+                <span class="summary-value" th:text="${order.status}"></span>
+            </div>
+
+            <div class="summary-item">
+                <span class="summary-label">支付方式</span>
+                <span class="summary-value" th:text="${order.paymentMethod}"></span>
+            </div>
+
+            <div class="summary-item">
+                <span class="summary-label">配送地址</span>
+                <span class="summary-value" th:text="${order.shippingAddress}"></span>
+            </div>
+
+            <div class="summary-item">
+                <span class="summary-label">下单时间</span>
+                <span class="summary-value" th:text="${#dates.format(order.createTime, 'yyyy-MM-dd HH:mm')}"></span>
+            </div>
+        </div>
+
+        <div class="next-steps">
+            <div class="next-steps-title">
+            <span>提示</span>
+                <span>下一步操作</span>
+            </div>
+            <p style="margin-bottom: 12px; color: var(--ios-gray-1);">
+                您可以在"我的订单"页面查看订单状态，管理员处理订单后状态会更新。
+            </p>
+            <p style="color: var(--ios-gray-1);">
+                订单状态包括：待处理 → 已支付 → 已完成。如有问题请联系客服。
+            </p>
+        </div>
+
+        <div class="action-buttons">
+            <a th:href="@{/order/list}" class="ios-btn ios-btn-primary btn-large">
+            查看我的订单
+            </a>
+            <a th:href="@{/music/list}" class="ios-btn ios-btn-success btn-large">
+            继续购物
+            </a>
+        </div>
+    </div>
 </div>
 
-<div style="margin-top: 30px;">
-    <a th:href="@{/order/list}" class="btn btn-primary">查看我的订单</a>
-    <a th:href="@{/music/list}" class="btn btn-success">继续购物</a>
-</div>
-
-<div style="margin-top: 30px; padding: 15px; background: #e7f3ff; border-radius: 5px;">
-    <h4>下一步操作：</h4>
-    <p>请在"我的订单"页面查看订单状态，管理员处理订单后状态会更新。</p>
-</div>
-<div th:replace="fragments/footer :: footer"></div>
+<!-- iOS风格页脚 -->
+<footer style="background: var(--blur-bg); backdrop-filter: blur(20px); padding: 20px; margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: white;">
+        <div th:if="${siteInfo}">
+            <h4 th:text="${siteInfo.siteName}" style="margin-bottom: 8px;"></h4>
+            <p style="margin-bottom: 8px;">
+                    <span th:if="${siteInfo.customerServicePhone}">
+                        客服电话：<span th:text="${siteInfo.customerServicePhone}"></span> ·
+                    </span>
+                <span th:if="${siteInfo.email}">
+                        邮箱：<span th:text="${siteInfo.email}"></span>
+                    </span>
+            </p>
+            <p th:if="${siteInfo.copyright}" th:text="${siteInfo.copyright}"></p>
+        </div>
+        <div th:unless="${siteInfo}">
+            <p>© 2025 音乐商店 版权所有</p>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

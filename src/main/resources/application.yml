@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/musicstore?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-    username: root
-    password: mcpe1242666377
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://127.0.0.1:3306/musicstore?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:mcpe1242666377}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   thymeleaf:
@@ -11,15 +11,40 @@ spring:
     suffix: .html
     mode: HTML
 
+  web:
+    resources:
+      static-locations: classpath:/static/
+
+  mvc:
+    static-path-pattern: /**
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
 server:
-  port: 8090
+  port: ${SERVER_PORT:8090}
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.example.musicstore.entity
+  type-aliases-package: com.music_store.Entity
   configuration:
     map-underscore-to-camel-case: true
 
 logging:
   level:
-    com.example.musicstore: debug
+    com.music_store: debug
+
+media:
+  audio-dir: ${MEDIA_AUDIO_DIR:C:\\Users\\NQ_Snvw\\Desktop\\music_store\\demoMusicStore\\audios}
+  preview-seconds: 30
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized

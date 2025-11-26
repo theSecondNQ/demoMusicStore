@@ -2,79 +2,155 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>网站信息设置 - 音乐商店</title>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        .header { margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"], input[type="email"], textarea {
-            width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;
+        .form-section {
+            margin-bottom: 24px;
         }
-        textarea { height: 100px; }
-        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-primary { background: #007bff; color: white; }
-        .success-msg { color: green; margin-bottom: 15px; padding: 10px; background: #d4edda; border-radius: 4px; }
-        .error-msg { color: red; margin-bottom: 15px; padding: 10px; background: #f8d7da; border-radius: 4px; }
+
+        .form-section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--ios-label);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 32px;
+        }
+
+        .admin-links {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
-<div class="header">
-    <a th:href="@{/music/list}">← 返回首页</a>
-    <h1>网站信息设置</h1>
+<!-- iOS风格头部 -->
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/music/list}" class="ios-brand">
+            音乐商店
+        </a>
+        <div class="ios-nav-items">
+            <a th:href="@{/music/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">返回首页</a>
+            <div th:if="${session.user}">
+                <span style="color: white; margin-right: 12px;" th:text="${session.user.username}"></span>
+                <a th:href="@{/logout}" class="ios-btn ios-btn-sm ios-btn-danger">退出</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="ios-container ios-fade-in">
+    <div class="form-container">
+        <div class="ios-card">
+            <div style="padding: 20px;">
+    <h1 style="margin-bottom: 24px;">网站信息设置</h1>
+
+                <!-- 成功消息 -->
+                <div th:if="${success}" class="success-msg" th:text="${success}"></div>
+
+                <!-- 错误消息 -->
+                <div th:if="${error}" class="error-msg" th:text="${error}"></div>
+
+                <form th:action="@{/admin/site/save}" method="post" th:object="${siteInfo}">
+                    <div class="form-section">
+    <div class="form-section-title">基本信息</div>
+                        <div class="ios-form-group">
+                            <label class="ios-label">网站名称</label>
+                            <input type="text" th:field="*{siteName}" class="ios-input" required>
+                        </div>
+
+                        <div class="ios-form-group">
+                            <label class="ios-label">客服电话</label>
+                            <input type="text" th:field="*{customerServicePhone}" class="ios-input" required>
+                        </div>
+
+                        <div class="ios-form-group">
+                            <label class="ios-label">邮箱</label>
+                            <input type="email" th:field="*{email}" class="ios-input">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">📍 联系信息</div>
+                        <div class="ios-form-group">
+                            <label class="ios-label">邮编</label>
+                            <input type="text" th:field="*{zipCode}" class="ios-input">
+                        </div>
+
+                        <div class="ios-form-group">
+                            <label class="ios-label">地址</label>
+                            <input type="text" th:field="*{address}" class="ios-input">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+    <div class="form-section-title">内容信息</div>
+                        <div class="ios-form-group">
+                            <label class="ios-label">关于我们</label>
+                            <textarea th:field="*{aboutUs}" class="ios-input" style="height: 120px;"></textarea>
+                        </div>
+
+                        <div class="ios-form-group">
+                            <label class="ios-label">版权信息</label>
+                            <input type="text" th:field="*{copyright}" class="ios-input">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="ios-btn ios-btn-success">
+                            <span style="margin-right: 6px;">💾</span> 保存设置
+                        </button>
+                    </div>
+                </form>
+
+                <div class="admin-links">
+                    <a th:href="@{/admin/categories}" class="ios-btn ios-btn-primary">📚 分类管理</a>
+                    <a th:href="@{/admin/users}" class="ios-btn ios-btn-primary">👥 用户管理</a>
+    <a th:href="@{/order/admin}" class="ios-btn ios-btn-primary">订单管理</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- 成功消息 -->
-<div th:if="${success}" class="success-msg" th:text="${success}"></div>
-
-<!-- 错误消息 -->
-<div th:if="${error}" class="error-msg" th:text="${error}"></div>
-
-<form th:action="@{/admin/site/save}" method="post" th:object="${siteInfo}">
-    <div class="form-group">
-        <label>网站名称：</label>
-        <input type="text" th:field="*{siteName}" required>
+<!-- iOS风格页脚 -->
+<footer style="background: var(--blur-bg); backdrop-filter: blur(20px); padding: 20px; margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: white;">
+        <div th:if="${siteInfo}">
+            <h4 th:text="${siteInfo.siteName}" style="margin-bottom: 8px;"></h4>
+            <p style="margin-bottom: 8px;">
+                    <span th:if="${siteInfo.customerServicePhone}">
+                        客服电话：<span th:text="${siteInfo.customerServicePhone}"></span> ·
+                    </span>
+                <span th:if="${siteInfo.email}">
+                        邮箱：<span th:text="${siteInfo.email}"></span>
+                    </span>
+            </p>
+            <p th:if="${siteInfo.copyright}" th:text="${siteInfo.copyright}"></p>
+        </div>
+        <div th:unless="${siteInfo}">
+            <p>© 2025 音乐商店 版权所有</p>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label>客服电话：</label>
-        <input type="text" th:field="*{customerServicePhone}" required>
-    </div>
-
-    <div class="form-group">
-        <label>邮编：</label>
-        <input type="text" th:field="*{zipCode}">
-    </div>
-
-    <div class="form-group">
-        <label>地址：</label>
-        <input type="text" th:field="*{address}">
-    </div>
-
-    <div class="form-group">
-        <label>邮箱：</label>
-        <input type="email" th:field="*{email}">
-    </div>
-
-    <div class="form-group">
-        <label>关于我们：</label>
-        <textarea th:field="*{aboutUs}"></textarea>
-    </div>
-
-    <div class="form-group">
-        <label>版权信息：</label>
-        <input type="text" th:field="*{copyright}">
-    </div>
-
-    <button type="submit" class="btn btn-primary">保存设置</button>
-</form>
-
-<div style="margin-top: 30px;">
-    <a th:href="@{/admin/categories}" class="btn btn-primary">分类管理</a>
-    <a th:href="@{/admin/users}" class="btn btn-primary">用户管理</a>
-    <a th:href="@{/order/admin}" class="btn btn-primary">订单管理</a>
-</div>
-
-<div th:replace="fragments/footer :: footer"></div>
+</footer>
 </body>
 </html>

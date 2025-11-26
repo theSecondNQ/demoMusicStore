@@ -2,72 +2,98 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>购物车 - 音乐商店</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; }
-        .header { margin-bottom: 20px; }
-        .cart-list { list-style: none; padding: 0; }
-        .cart-item { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
-        .music-title { font-size: 18px; font-weight: bold; }
-        .music-info { color: #666; margin: 5px 0; }
-        .actions { margin-top: 10px; }
-        .btn { padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-primary { background: #007bff; color: white; }
-        .btn-danger { background: #dc3545; color: white; }
-        .btn-success { background: #28a745; color: white; }
-        .total { font-size: 20px; font-weight: bold; margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; }
-        .empty-message { text-align: center; padding: 40px; color: #666; }
-        .quantity-input { width: 60px; }
-    </style>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
 </head>
 <body>
-<div class="header">
-    <a th:href="@{/music/list}">← 继续购物</a>
-    <h1 style="text-align: center;">购物车</h1>
-</div>
-
-<div th:if="${cartList != null and !cartList.isEmpty()}">
-    <ul class="cart-list">
-        <li th:each="item : ${cartList}" class="cart-item">
-            <div class="music-title" th:text="${item.title}"></div>
-            <div class="music-info">
-                歌手：<span th:text="${item.artist}"></span> |
-                专辑：<span th:text="${item.album}"></span> |
-                单价：￥<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}"></span>
-            </div>
-            <div class="music-info">
-                数量：
-                <form th:action="@{/cart/update}" method="post" style="display: inline;">
-                    <input type="hidden" name="cartId" th:value="${item.id}">
-                    <input type="number" name="quantity" th:value="${item.quantity}" min="1" class="quantity-input">
-                    <button type="submit" class="btn btn-primary">更新</button>
-                </form>
-            </div>
-            <div class="music-info">
-                小计：￥<span th:text="${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}"></span>
-            </div>
-            <div class="actions">
-                <a th:href="@{'/cart/delete/' + ${item.id}}" class="btn btn-danger"
-                   onclick="return confirm('确定要从购物车移除吗？')">删除</a>
-            </div>
-        </li>
-    </ul>
-
-    <div class="total">
-        总计：￥<span th:text="${#numbers.formatDecimal(total, 1, 2)}"></span>
-    </div>
-
-    <div class="actions" style="text-align: center;">
-        <a th:href="@{/cart/checkout}" class="btn btn-success" style="padding: 10px 20px; font-size: 16px;">
-            去结算
+<!-- iOS风格头部 -->
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/music/list}" class="ios-brand">
+            音乐商店
         </a>
+        <div class="ios-nav-items">
+            <a th:href="@{/music/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">继续购物</a>
+            <a th:href="@{/profile}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">个人中心</a>
+        </div>
+    </div>
+</header>
+
+<div class="ios-container ios-fade-in">
+    <div class="ios-card">
+        <div style="padding: 20px;">
+    <h1 style="margin-bottom: 20px;">购物车</h1>
+
+            <div th:if="${cartList != null and not cartList.isEmpty()}">
+                <div class="ios-list">
+                    <div th:each="item : ${cartList}" class="ios-list-item">
+                        <div class="ios-list-item-content">
+                            <div class="ios-list-item-title" th:text="${item.title}"></div>
+                            <div class="ios-list-item-subtitle">
+                                <span th:text="${item.artist}"></span> ·
+                                <span th:text="${item.album}"></span> ·
+                                单价：￥<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}"></span>
+                            </div>
+                            <div style="margin-top: 8px;">
+                                <form th:action="@{/cart/update}" method="post" style="display: inline;">
+                                    <input type="hidden" name="cartId" th:value="${item.id}">
+                                    数量：
+                                    <input type="number" name="quantity" th:value="${item.quantity}" min="1" class="quantity-input" style="width: 60px; padding: 4px; border: 1px solid var(--ios-gray-4); border-radius: 6px;">
+                                    <button type="submit" class="ios-btn ios-btn-sm ios-btn-primary">更新</button>
+                                </form>
+                            </div>
+                            <div style="margin-top: 8px; font-weight: 600;">
+                                小计：￥<span th:text="${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}"></span>
+                            </div>
+                        </div>
+                        <div class="ios-list-item-actions">
+                            <a th:href="@{'/cart/delete/' + ${item.id}}" class="ios-btn ios-btn-sm ios-btn-danger"
+                               onclick="return confirm('确定要从购物车移除吗？')">删除</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ios-card" style="background: var(--ios-gray-6); margin-top: 20px;">
+                    <div style="padding: 20px; text-align: center;">
+                        <h2 style="margin-bottom: 16px;">
+                            总计：￥<span th:text="${#numbers.formatDecimal(total, 1, 2)}"></span>
+                        </h2>
+                        <a th:href="@{/cart/checkout}" class="ios-btn ios-btn-success" style="padding: 12px 24px; font-size: 18px;">
+                            💳 去结算
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${cartList == null or cartList.isEmpty()}" style="text-align: center; padding: 40px; color: var(--ios-gray-2);">
+    <div style="font-size: 16px; margin-bottom: 16px;">购物车为空</div>
+                <h3>购物车为空</h3>
+                <p>去 <a th:href="@{/music/list}" class="ios-btn ios-btn-primary" style="margin-top: 16px;">音乐列表</a> 添加喜欢的音乐吧！</p>
+            </div>
+        </div>
     </div>
 </div>
 
-<div th:if="${cartList == null or cartList.isEmpty()}" class="empty-message">
-    <h3>购物车为空</h3>
-    <p>去 <a th:href="@{/music/list}">音乐列表</a> 添加喜欢的音乐吧！</p>
-</div>
-<div th:replace="fragments/footer :: footer"></div>
+<!-- iOS风格页脚 -->
+<footer style="background: var(--blur-bg); backdrop-filter: blur(20px); padding: 20px; margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: white;">
+        <div th:if="${siteInfo}">
+            <h4 th:text="${siteInfo.siteName}" style="margin-bottom: 8px;"></h4>
+            <p style="margin-bottom: 8px;">
+                    <span th:if="${siteInfo.customerServicePhone}">
+                        客服电话：<span th:text="${siteInfo.customerServicePhone}"></span> ·
+                    </span>
+                <span th:if="${siteInfo.email}">
+                        邮箱：<span th:text="${siteInfo.email}"></span>
+                    </span>
+            </p>
+            <p th:if="${siteInfo.copyright}" th:text="${siteInfo.copyright}"></p>
+        </div>
+        <div th:unless="${siteInfo}">
+            <p>© 2025 音乐商店 版权所有</p>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

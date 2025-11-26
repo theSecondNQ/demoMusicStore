@@ -44,4 +44,13 @@ public interface OrderDao {
 
     @Select("SELECT COUNT(*) FROM `order` WHERE status = #{status}")
     int countByStatus(String status);
+
+    // 判断指定用户是否已购买指定音乐（支付或完成）
+    @Select("SELECT COUNT(*) FROM `order` o JOIN order_item oi ON o.id = oi.order_id " +
+            "WHERE o.user_id = #{userId} AND o.status IN ('paid','completed') AND oi.music_id = #{musicId}")
+    int countPurchasedMusic(@Param("userId") Integer userId, @Param("musicId") Integer musicId);
+
+    // 统计任意订单项中是否存在该音乐（用于删除前阻断）
+    @Select("SELECT COUNT(*) FROM order_item WHERE music_id = #{musicId}")
+    int countOrderItemsByMusicId(Integer musicId);
 }

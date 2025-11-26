@@ -2,70 +2,140 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>添加音乐 - 音乐商店</title>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"], input[type="number"], select, textarea {
-            width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;
+        .form-section {
+            margin-bottom: 24px;
         }
-        textarea { height: 80px; }
-        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-primary { background: #007bff; color: white; }
-        .btn-secondary { background: #6c757d; color: white; }
+
+        .form-section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--ios-label);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
-<div class="header">
-    <a th:href="@{/music/list}">← 返回音乐列表</a>
-    <h1>添加音乐</h1>
+<!-- iOS风格头部 -->
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/music/list}" class="ios-brand">
+            音乐商店
+        </a>
+        <div class="ios-nav-items">
+            <a th:href="@{/music/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">返回列表</a>
+            <div th:if="${session.user}">
+                <span style="color: white; margin-right: 12px;" th:text="${session.user.username}"></span>
+                <a th:href="@{/logout}" class="ios-btn ios-btn-sm ios-btn-danger">退出</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="ios-container ios-fade-in">
+    <div class="form-container">
+        <div class="ios-card">
+            <div style="padding: 20px;">
+<h1 style="margin-bottom: 24px;">添加音乐</h1>
+
+                <form th:action="@{/music/add}" method="post" enctype="multipart/form-data">
+                    <div class="form-section">
+    <div class="form-section-title">基本信息</div>
+                        <div class="ios-form-group">
+                            <label class="ios-label">歌曲名称</label>
+                            <input type="text" id="title" name="title" class="ios-input" placeholder="可留空，系统将从文件读取">
+                        </div>
+
+                        <div class="ios-form-group">
+                            <label class="ios-label">歌手</label>
+                            <input type="text" id="artist" name="artist" class="ios-input" placeholder="可留空，系统将从文件读取">
+                        </div>
+
+                        <div class="ios-form-group">
+                            <label class="ios-label">分类</label>
+                            <select id="categoryId" name="categoryId" class="ios-select" required>
+                                <option value="">请选择分类</option>
+                                <option th:each="category : ${categories}"
+                                        th:value="${category.id}"
+                                        th:text="${category.name}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+    <div class="form-section-title">详细信息</div>
+                        <div class="ios-form-group">
+                            <label class="ios-label">专辑</label>
+                            <input type="text" id="album" name="album" class="ios-input" placeholder="可留空，系统将从文件读取">
+                        </div>
+
+                        <div class="ios-form-group">
+                            <label class="ios-label">时长（秒）</label>
+                            <input type="number" id="duration" name="duration" class="ios-input" min="1" placeholder="可留空，系统将从文件读取">
+                        </div>
+
+                        <div class="ios-form-group">
+                            <label class="ios-label">价格</label>
+                            <input type="number" id="price" name="price" class="ios-input" min="0" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="ios-form-group">
+                            <label class="ios-label">音频文件（MP3）</label>
+                            <input type="file" id="audioFile" name="audioFile" class="ios-input" accept=".mp3,audio/mpeg" required>
+                            <div class="hint">上传后系统会自动保存到服务器并读取元数据。</div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="ios-btn ios-btn-success">
+                            <span style="margin-right: 6px;">💾</span> 添加音乐
+                        </button>
+                        <a th:href="@{/music/list}" class="ios-btn ios-btn-secondary">取消</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-<form th:action="@{/music/add}" method="post">
-    <div class="form-group">
-        <label for="title">歌曲名称：</label>
-        <input type="text" id="title" name="title" required>
+<!-- iOS风格页脚 -->
+<footer style="background: var(--blur-bg); backdrop-filter: blur(20px); padding: 20px; margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: white;">
+        <div th:if="${siteInfo}">
+            <h4 th:text="${siteInfo.siteName}" style="margin-bottom: 8px;"></h4>
+            <p style="margin-bottom: 8px;">
+                    <span th:if="${siteInfo.customerServicePhone}">
+                        客服电话：<span th:text="${siteInfo.customerServicePhone}"></span> ·
+                    </span>
+                <span th:if="${siteInfo.email}">
+                        邮箱：<span th:text="${siteInfo.email}"></span>
+                    </span>
+            </p>
+            <p th:if="${siteInfo.copyright}" th:text="${siteInfo.copyright}"></p>
+        </div>
+        <div th:unless="${siteInfo}">
+            <p>© 2025 音乐商店 版权所有</p>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label for="artist">歌手：</label>
-        <input type="text" id="artist" name="artist" required>
-    </div>
-
-    <div class="form-group">
-        <label for="categoryId">分类：</label>
-        <select id="categoryId" name="categoryId" required>
-            <option value="">请选择分类</option>
-            <option th:each="category : ${categories}"
-                    th:value="${category.id}"
-                    th:text="${category.name}">
-            </option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="album">专辑：</label>
-        <input type="text" id="album" name="album">
-    </div>
-
-    <div class="form-group">
-        <label for="duration">时长（秒）：</label>
-        <input type="number" id="duration" name="duration" min="1" required>
-    </div>
-
-    <div class="form-group">
-        <label for="price">价格：</label>
-        <input type="number" id="price" name="price" min="0" step="0.01" required>
-    </div>
-
-    <div style="text-align: center;">
-        <button type="submit" class="btn btn-primary">添加音乐</button>
-        <a th:href="@{/music/list}" class="btn btn-secondary">取消</a>
-    </div>
-</form>
-
-<div th:replace="fragments/footer :: footer"></div>
+</footer>
 </body>
 </html>

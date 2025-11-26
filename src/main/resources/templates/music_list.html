@@ -2,108 +2,381 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>音乐列表 - 音乐商店</title>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .header { background: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
-        .user-info { float: right; }
-        .search-form { margin: 20px 0; }
-        .music-list { list-style: none; padding: 0; }
-        .music-item { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
-        .music-title { font-size: 18px; font-weight: bold; }
-        .music-info { color: #666; margin: 5px 0; }
-        .actions { margin-top: 10px; }
-        .btn { padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-primary { background: #007bff; color: white; }
-        .btn-success { background: #28a745; color: white; }
-        .btn-danger { background: #dc3545; color: white; }
-        .favourite { color: red; }
-        .admin-actions { margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+        .user-welcome {
+            color: white;
+            margin-right: 16px;
+            font-weight: 500;
+        }
+
+        .search-section {
+            background: var(--ios-gray-6);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .music-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .music-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .music-cover {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, var(--ios-purple), var(--ios-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .music-content {
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .music-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .favourite-icon {
+            color: var(--ios-red);
+        }
+
+        .music-meta {
+            color: var(--ios-gray-1);
+            font-size: 14px;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .music-price {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--ios-green);
+            margin-bottom: 12px;
+        }
+
+        .music-actions {
+            margin-top: auto;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .admin-section {
+            background: var(--ios-gray-6);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 32px;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--ios-gray-2);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .music-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-input {
+                min-width: auto;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="header">
-    <h1>音乐商店</h1>
-
-    <div class="user-info">
-        <div th:if="${session.user}">
-            欢迎，<span th:text="${session.user.username}"></span>！
-            <a th:href="@{/profile}" class="btn btn-primary">个人中心</a>
-            <a th:href="@{/favourite/list}" class="btn btn-primary">我的收藏</a>
-            <a th:href="@{/cart/list}" class="btn btn-primary">购物车</a>
-            <a th:if="${session.user.role != 'admin'}" th:href="@{/order/list}" class="btn btn-primary">我的订单</a>
-            <a th:href="@{/logout}" class="btn btn-danger">退出</a>
-        </div>
-        <div th:unless="${session.user}">
-            <a th:href="@{/login}" class="btn btn-primary">登录</a>
-            <a th:href="@{/register}" class="btn btn-success">注册</a>
+<!-- iOS风格头部 -->
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/music/list}" class="ios-brand">
+            音乐商店
+        </a>
+        <div class="ios-nav-items">
+            <a th:href="@{/music/daily}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: var(--ios-gray-1); border-color: var(--ios-gray-3);">每日推荐</a>
+            <div th:if="${session.user}">
+                <span class="user-welcome" th:text="${session.user.username}"></span>
+                <a th:href="@{/playlist/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: var(--ios-gray-1); border-color: var(--ios-gray-3);">我的歌单</a>
+                <a th:href="@{/profile}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: var(--ios-gray-1); border-color: var(--ios-gray-3);">个人中心</a>
+                <a th:href="@{/favourite/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: var(--ios-gray-1); border-color: var(--ios-gray-3);">我的收藏</a>
+                <a th:href="@{/cart/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: var(--ios-gray-1); border-color: var(--ios-gray-3);">购物车</a>
+                <a th:if="${session.user.role != 'admin'}" th:href="@{/order/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: var(--ios-gray-1); border-color: var(--ios-gray-3);">我的订单</a>
+                <a th:href="@{/logout}" class="ios-btn ios-btn-sm ios-btn-danger">退出</a>
+            </div>
+            <div th:unless="${session.user}">
+                <a th:href="@{/login}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: var(--ios-gray-1); border-color: var(--ios-gray-3);">登录</a>
+                <a th:href="@{/register}" class="ios-btn ios-btn-sm ios-btn-success">注册</a>
+            </div>
         </div>
     </div>
-    <div style="clear: both;"></div>
-</div>
+</header>
 
-<form method="get" class="search-form">
-    <input type="text" name="keyword" placeholder="搜索歌曲、歌手或专辑..." th:value="${keyword}">
-    <select name="category">
-        <option value="">所有分类</option>
-        <option th:each="c : ${categories}"
-                th:value="${c.name}"
-                th:text="${c.name}"
-                th:selected="${category == c.name}">
-        </option>
-    </select>
-    <button type="submit" class="btn btn-primary">搜索</button>
-    <a th:href="@{/music/list}" class="btn">重置</a>
-</form>
+<div class="ios-container ios-fade-in">
+    <!-- 操作反馈消息 -->
+    <div th:if="${param.error}" style="margin: 12px 0; padding: 12px; border-radius: 8px; background: #ffecec; color: #a80000;">
+        <span th:text="${#strings.arrayJoin(param.error, ' ')}"></span>
+    </div>
+    <div th:if="${param.msg}" style="margin: 12px 0; padding: 12px; border-radius: 8px; background: #eaffea; color: #0f7a0f;">
+        <span th:text="${#strings.arrayJoin(param.msg, ' ')}"></span>
+    </div>
+    <!-- 搜索区域 -->
+    <div class="search-section">
+        <h2 style="margin-bottom: 16px;">搜索音乐</h2>
+        <form method="get" class="search-form">
+            <div class="search-input">
+                <label class="ios-label">关键词</label>
+                <input type="text" name="keyword" class="ios-input" placeholder="搜索歌曲、歌手或专辑..." th:value="${keyword}">
+            </div>
+            <div class="search-input">
+                <label class="ios-label">分类</label>
+                <select name="category" class="ios-select">
+                    <option value="">所有分类</option>
+                    <option th:each="c : ${categories}"
+                            th:value="${c.name}"
+                            th:text="${c.name}"
+                            th:selected="${category == c.name}">
+                    </option>
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="ios-btn ios-btn-primary">搜索</button>
+                <a th:href="@{/music/list}" class="ios-btn ios-btn-secondary">重置</a>
+            </div>
+        </form>
+    </div>
 
-<div th:if="${musicList}">
-    <h2>音乐列表</h2>
-    <ul class="music-list">
-        <li th:each="music : ${musicList}" class="music-item">
-            <div class="music-title">
-                <a th:href="@{'/music/detail/' + ${music.id}}" th:text="${music.title}"></a>
-                <span th:if="${music.favourite}" class="favourite"> ♥</span>
-            </div>
-            <div class="music-info">
-                歌手：<span th:text="${music.artist}"></span> |
-                专辑：<span th:text="${music.album}"></span> |
-                分类：<span th:text="${music.categoryName}"></span> |
-                时长：<span th:text="${#numbers.formatInteger(music.duration/60, 1)}"></span>:<span th:text="${#numbers.formatInteger(music.duration%60, 2)}"></span> |
-                播放量：<span th:text="${music.playCount}"></span>
-            </div>
-            <div class="music-info">
-                价格：￥<span th:text="${#numbers.formatDecimal(music.price, 1, 2)}"></span>
-            </div>
-            <div class="actions" th:if="${session.user}">
-                <form th:action="@{'/favourite/add/' + ${music.id}}" method="post" style="display: inline;">
-                    <button type="submit" class="btn btn-primary" th:disabled="${music.favourite}">
-                        <span th:if="${music.favourite}">已收藏</span>
-                        <span th:unless="${music.favourite}">收藏</span>
-                    </button>
-                </form>
-                <form th:action="@{/cart/add}" method="post" style="display: inline;">
-                    <input type="hidden" name="musicId" th:value="${music.id}">
-                    <input type="number" name="quantity" value="1" min="1" style="width: 60px;">
-                    <button type="submit" class="btn btn-success">加入购物车</button>
-                </form>
-                <div th:if="${session.user != null && session.user.role == 'admin'}" style="display: inline; margin-left: 10px;">
-                    <a th:href="@{'/music/edit/' + ${music.id}}" class="btn btn-warning btn-sm">编辑</a>
-                    <a th:href="@{'/music/delete/' + ${music.id}}" class="btn btn-danger btn-sm"
-                       onclick="return confirm('确定要删除这首音乐吗？')">删除</a>
+    <!-- 音乐列表 -->
+    <div class="ios-card">
+        <div style="padding: 20px;">
+        <h2 style="margin-bottom: 20px;">音乐列表</h2>
+
+            <!-- 修复：使用正确的Thymeleaf表达式 -->
+            <div th:if="${musicList != null and !musicList.isEmpty()}">
+                <div class="music-grid">
+                    <div th:each="music : ${musicList}" class="ios-card music-card">
+                        <div class="music-cover">
+                                <span th:with="titleAbbr=${music.title != null ? (music.title.length() >= 2 ? music.title.substring(0, 2) : music.title) : '音乐'}">
+                                    <span th:text="${titleAbbr}"></span>
+                                </span>
+                        </div>
+                        <div class="music-content">
+                            <div class="music-title">
+                                <a th:href="@{'/music/detail/' + ${music.id}}" th:text="${music.title}" data-role="track" th:attr="data-id=${music.id}"></a>
+                                <span th:if="${music.favourite}" class="favourite-icon">♥</span>
+                            </div>
+                            <div class="music-meta">
+                                <div>🎤 <span th:text="${music.artist}"></span></div>
+                <div>专辑：<span th:text="${music.album}"></span></div>
+                                <div>📚 <span th:text="${music.categoryName}"></span></div>
+                <div>时长：
+                                    <span th:text="${#numbers.formatInteger(music.duration/60, 1)}"></span>:
+                                    <span th:text="${#numbers.formatInteger(music.duration%60, 2)}"></span>
+                                </div>
+                <div>播放量：<span th:text="${music.playCount}"></span> 次播放</div>
+                            </div>
+                            <div class="music-price">
+                                ￥<span th:text="${#numbers.formatDecimal(music.price, 1, 2)}"></span>
+                            </div>
+
+                            <div class="music-actions" th:if="${session.user}">
+                                <!-- 收藏按钮 -->
+                                <form th:action="@{'/favourite/add/' + ${music.id}}" method="post" style="display: inline;">
+                                    <button type="submit" class="ios-btn ios-btn-sm"
+                                            th:classappend="${music.favourite} ? 'ios-btn-secondary' : 'ios-btn-primary'"
+                                            th:disabled="${music.favourite}">
+                <span th:if="${music.favourite}">已收藏</span>
+                                        <span th:unless="${music.favourite}">🤍 收藏</span>
+                                    </button>
+                                </form>
+
+                                <!-- 加入购物车 -->
+                                <form th:action="@{/cart/add}" method="post" style="display: inline;">
+                                    <input type="hidden" name="musicId" th:value="${music.id}">
+                                    <div style="display: flex; gap: 4px;">
+                                        <input type="number" name="quantity" value="1" min="1"
+                                               style="width: 50px; padding: 4px; border: 1px solid var(--ios-gray-4); border-radius: 6px;">
+                <button type="submit" class="ios-btn ios-btn-sm ios-btn-success">加入购物车</button>
+                                    </div>
+                                </form>
+
+                                <!-- 管理员操作 -->
+                                <div th:if="${session.user != null && session.user.role == 'admin'}" style="display: flex; gap: 4px;">
+                <a th:href="@{'/music/edit/' + ${music.id}}" class="ios-btn ios-btn-sm ios-btn-warning">编辑</a>
+                                    <a th:href="@{'/music/delete/' + ${music.id}}" class="ios-btn ios-btn-sm ios-btn-danger js-delete"
+                                       th:attr="data-delete-url=@{'/music/delete/' + ${music.id}}">删除</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </li>
-    </ul>
+
+            <!-- 修复：使用正确的Thymeleaf表达式 -->
+            <div th:if="${musicList == null or musicList.isEmpty()}" class="empty-state">
+        <div class="empty-icon">暂无音乐</div>
+                <h3>暂无音乐</h3>
+                <p th:if="${keyword != null or category != null}">没有找到符合条件的音乐，请尝试其他搜索条件</p>
+                <p th:unless="${keyword != null or category != null}">目前还没有音乐，请稍后再来</p>
+                <a th:href="@{/music/list}" class="ios-btn ios-btn-primary" style="margin-top: 16px;">刷新列表</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 简易播放器 -->
+    <div class="ios-card" style="margin-top:16px; padding:16px;" th:if="${musicList != null and !musicList.isEmpty()}">
+        <div class="form-section-title">播放器</div>
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <button id="btnPrev" class="ios-btn ios-btn-secondary">⏮ 上一首</button>
+<button id="btnPlay" class="ios-btn ios-btn-success">播放</button>
+            <button id="btnNext" class="ios-btn ios-btn-secondary">⏭ 下一首</button>
+            <button id="btnMode" class="ios-btn ios-btn-outline" title="切换播放模式">🔁 顺序播放</button>
+            <span id="nowPlaying" style="margin-left:8px; color: var(--ios-secondary);">未播放</span>
+            <span id="playStatus" aria-live="polite" style="margin-left:8px;"></span>
+        </div>
+        <!-- 歌单切换 -->
+        <div style="margin-top:12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;" th:if="${session.user}">
+            <span style="color: var(--ios-secondary);">歌单切换：</span>
+            <select id="playlistSelect" class="ios-select" th:if="${session.user}" style="min-width:200px;">
+                <option value="" selected disabled>选择歌单</option>
+                <option th:each="p : ${playlists}"
+                        th:value="${p.id}"
+                        th:text="${p.name + (p.visibility == 'shared' ? ' (共享)' : ' (私有)')}">
+                </option>
+            </select>
+            <button id="btnLoadPlaylist" class="ios-btn ios-btn-outline" th:if="${session.user}">切换到歌单</button>
+            <button id="btnPlayAll" class="ios-btn ios-btn-secondary">播放全部音乐</button>
+        </div>
+        <audio id="audio" preload="none" style="width:100%; margin-top:12px;" controls></audio>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function(){
+            window.PLAYLIST = Array.from(document.querySelectorAll('a[data-role="track"]')).map(a => ({
+                id: parseInt(a.getAttribute('data-id')), title: a.textContent.trim()
+            }));
+        });
+        /*]]>*/
+    </script>
+    <script src="/js/player.js"></script>
+
+    <!-- 删除确认与重定向处理 -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function(){
+            function handleDeleteClick(e){
+                e.preventDefault();
+                var link = e.currentTarget;
+                var url = link.getAttribute('data-delete-url') || link.getAttribute('href');
+                if (!url) return;
+                if (!confirm('确定要删除这首音乐吗？')) return;
+                fetch(url, { method: 'GET', credentials: 'same-origin' })
+                    .then(function(resp){
+                        var target = resp && resp.url ? resp.url : '/music/list?msg=' + encodeURIComponent('删除成功');
+                        window.location.href = target;
+                    })
+                    .catch(function(){
+                        window.location.href = '/music/list?error=' + encodeURIComponent('删除失败，请稍后再试');
+                    });
+            }
+            document.querySelectorAll('a.js-delete').forEach(function(a){
+                a.addEventListener('click', handleDeleteClick);
+            });
+        });
+        /*]]>*/
+    </script>
+
+    <!-- 管理员功能区 -->
+    <div th:if="${session.user != null && session.user.role == 'admin'}" class="admin-section">
+        <h3 style="margin-bottom: 16px;">🔧 管理员功能</h3>
+        <div class="admin-actions">
+<a th:href="@{/music/add}" class="ios-btn ios-btn-primary">添加音乐</a>
+            <a th:href="@{/admin/categories}" class="ios-btn ios-btn-primary">📚 分类管理</a>
+            <a th:href="@{/admin/users}" class="ios-btn ios-btn-primary">👥 用户管理</a>
+        <a th:href="@{/order/admin}" class="ios-btn ios-btn-primary">订单管理</a>
+        <a th:href="@{/admin/site/info}" class="ios-btn ios-btn-primary">网站设置</a>
+        </div>
+    </div>
 </div>
 
-<div th:if="${session.user != null && session.user.role == 'admin'}" class="admin-actions">
-    <h3>管理员功能</h3>
-    <a th:href="@{/music/add}" class="btn btn-primary">添加音乐</a>
-    <a th:href="@{/admin/categories}" class="btn btn-primary">分类管理</a>
-    <a th:href="@{/admin/users}" class="btn btn-primary">用户管理</a>
-    <a th:href="@{/order/admin}" class="btn btn-primary">订单管理</a>
-    <a th:href="@{/admin/site/info}" class="btn btn-primary">网站设置</a>
-</div>
-<div th:replace="fragments/footer :: footer"></div>
+<!-- iOS风格页脚 -->
+<footer style="background: var(--blur-bg); backdrop-filter: blur(20px); padding: 20px; margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: white;">
+        <div th:if="${siteInfo}">
+            <h4 th:text="${siteInfo.siteName}" style="margin-bottom: 8px;"></h4>
+            <p style="margin-bottom: 8px;">
+                    <span th:if="${siteInfo.customerServicePhone}">
+                        客服电话：<span th:text="${siteInfo.customerServicePhone}"></span> ·
+                    </span>
+                <span th:if="${siteInfo.email}">
+                        邮箱：<span th:text="${siteInfo.email}"></span>
+                    </span>
+            </p>
+            <p th:if="${siteInfo.copyright}" th:text="${siteInfo.copyright}"></p>
+        </div>
+        <div th:unless="${siteInfo}">
+            <p>© 2025 音乐商店 版权所有</p>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

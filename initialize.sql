@@ -29,7 +29,9 @@ CREATE TABLE `music` (
   `duration` INT COMMENT '时长(秒)',
   `play_count` INT DEFAULT 0,
   `price` DECIMAL(10,2) DEFAULT 0.00,
+  `audio_path` VARCHAR(255) NOT NULL,
   `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `deleted` TINYINT(1) NOT NULL DEFAULT 0,
   FOREIGN KEY (`category_id`) REFERENCES `category`(`id`)
 );
 
@@ -79,6 +81,16 @@ CREATE TABLE `order_item` (
   FOREIGN KEY (`music_id`) REFERENCES `music`(`id`)
 );
 
+-- 用户每日全曲试用表
+CREATE TABLE `user_daily_trial` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `trial_date` DATE NOT NULL,
+  `used` TINYINT(1) DEFAULT 0,
+  UNIQUE KEY `uniq_user_date` (`user_id`, `trial_date`),
+  FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
+);
+
 -- 网站信息表
 CREATE TABLE IF NOT EXISTS `site_info` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
@@ -109,10 +121,10 @@ INSERT INTO user (username, password, email, role) VALUES
 ('admin', 'e10adc3949ba59abbe56e057f20f883e', 'admin@music.com', 'admin'),
 ('user1', 'e10adc3949ba59abbe56e057f20f883e', 'user1@music.com', 'user');
 
--- 插入音乐数据
-INSERT INTO music (title, artist, category_id, album, duration, price) VALUES
-('告白气球', '周杰伦', 1, '周杰伦的床边故事', 235, 2.99),
-('海阔天空', 'Beyond', 2, '乐与怒', 326, 3.49),
-('月光奏鸣曲', '贝多芬', 3, '钢琴奏鸣曲集', 890, 4.99),
-('Faded', 'Alan Walker', 4, 'Different World', 212, 2.49),
-('Take Five', 'Dave Brubeck', 5, 'Time Out', 324, 3.99);
+-- 插入音乐数据（audio_path 使用示例文件名，存放于 audios 目录）
+INSERT INTO music (title, artist, category_id, album, duration, price, audio_path) VALUES
+('告白气球', '周杰伦', 1, '周杰伦的床边故事', 235, 2.99, 'gaobaiqiqiu.mp3'),
+('海阔天空', 'Beyond', 2, '乐与怒', 326, 3.49, 'haikuotiankong.mp3'),
+('月光奏鸣曲', '贝多芬', 3, '钢琴奏鸣曲集', 890, 4.99, 'yueguang.mp3'),
+('Faded', 'Alan Walker', 4, 'Different World', 212, 2.49, 'faded.mp3'),
+('Take Five', 'Dave Brubeck', 5, 'Time Out', 324, 3.99, 'takefive.mp3');

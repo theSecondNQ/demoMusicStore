@@ -2,65 +2,103 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的收藏 - 音乐商店</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; }
-        .header { margin-bottom: 20px; }
-        .favourite-list { list-style: none; padding: 0; }
-        .favourite-item { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
-        .music-title { font-size: 18px; font-weight: bold; }
-        .music-info { color: #666; margin: 5px 0; }
-        .actions { margin-top: 10px; }
-        .btn { padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-primary { background: #007bff; color: white; }
-        .btn-danger { background: #dc3545; color: white; }
-        .empty-message { text-align: center; padding: 40px; color: #666; }
-        .favourite-count { margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
-    </style>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
 </head>
 <body>
-<div class="header">
-    <a th:href="@{/music/list}">← 返回音乐列表</a>
-    <h1 style="text-align: center;">我的收藏</h1>
-</div>
+<!-- iOS风格头部 -->
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/music/list}" class="ios-brand">
+            音乐商店
+        </a>
+        <div class="ios-nav-items">
+            <a th:href="@{/music/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">返回首页</a>
+            <a th:href="@{/profile}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">个人中心</a>
+        </div>
+    </div>
+</header>
 
-<div class="favourite-count" th:if="${favouriteCount > 0}">
-    共收藏 <strong th:text="${favouriteCount}"></strong> 首音乐
-</div>
+<div class="ios-container ios-fade-in">
+    <div class="ios-card">
+        <div style="padding: 20px;">
+    <h1 style="margin-bottom: 20px;">我的收藏</h1>
 
-<div th:if="${favourites != null and !favourites.isEmpty()}">
-    <ul class="favourite-list">
-        <li th:each="favourite : ${favourites}" class="favourite-item">
-            <div class="music-title" th:text="${favourite.musicTitle}"></div>
-            <div class="music-info">
-                歌手：<span th:text="${favourite.artist}"></span> |
-                专辑：<span th:text="${favourite.album}"></span> |
-                分类：<span th:text="${favourite.categoryName}"></span> |
-                价格：￥<span th:text="${#numbers.formatDecimal(favourite.price, 1, 2)}"></span>
+            <div th:if="${favoriteCount > 0}" class="ios-card" style="background: var(--ios-gray-6); margin-bottom: 20px;">
+                <div style="padding: 16px; text-align: center;">
+                    <h3>共收藏 <span th:text="${favoriteCount}" style="color: var(--ios-red);"></span> 首音乐</h3>
+                </div>
             </div>
-            <div class="music-info">
-                收藏时间：<span th:text="${#dates.format(favourite.createTime, 'yyyy-MM-dd HH:mm')}"></span>
+
+            <div th:if="${favorites != null and not favorites.isEmpty()}">
+                <div class="music-grid">
+                    <div th:each="favorite : ${favorites}" class="ios-card music-card">
+                        <div class="music-cover"
+                             th:with="titleAbbr=${favorite.musicTitle != null ? (favorite.musicTitle.length() >= 2 ? favorite.musicTitle.substring(0, 2) : favorite.musicTitle) : '音乐'}">
+                            <span th:text="${titleAbbr}"></span>
+                        </div>
+                        <div class="music-info">
+                            <div class="music-title">
+                                <span th:text="${favorite.musicTitle != null ? favorite.musicTitle : '未知歌曲'}"></span>
+                                <span class="favorite-icon">♥</span>
+                            </div>
+                            <div class="music-meta">
+                                <span th:text="${favorite.artist != null ? favorite.artist : '未知歌手'}"></span> ·
+                                <span th:text="${favorite.categoryName != null ? favorite.categoryName : '未分类'}"></span>
+                            </div>
+                            <div class="music-price" th:text="'￥' + ${favorite.price != null ? #numbers.formatDecimal(favorite.price, 1, 2) : '0.00'}"></div>
+                            <div class="music-meta" style="font-size: 12px;">
+                                收藏时间：<span th:text="${#dates.format(favorite.createTime, 'yyyy-MM-dd HH:mm')}"></span>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <a th:href="@{'/music/detail/' + ${favorite.musicId}}" class="ios-btn ios-btn-sm ios-btn-primary">详情</a>
+
+                            <form th:action="@{'/favorite/remove/' + ${favorite.musicId}}" method="post" style="margin: 0;">
+                                <button type="submit" class="ios-btn ios-btn-sm ios-btn-danger" style="width: 100%;">取消收藏</button>
+                            </form>
+
+                            <form th:action="@{/cart/add}" method="post" style="margin: 0;">
+                                <input type="hidden" name="musicId" th:value="${favorite.musicId}">
+                                <div style="display: flex; gap: 4px;">
+                                    <input type="number" name="quantity" value="1" min="1" style="width: 50px; padding: 4px; border: 1px solid var(--ios-gray-4); border-radius: 6px;">
+                                    <button type="submit" class="ios-btn ios-btn-sm ios-btn-success">购物车</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="actions">
-                <a th:href="@{'/music/detail/' + ${favourite.musicId}}" class="btn btn-primary">查看详情</a>
-                <form th:action="@{'/favourite/remove/' + ${favourite.musicId}}" method="post" style="display: inline;">
-                    <button type="submit" class="btn btn-danger">取消收藏</button>
-                </form>
-                <form th:action="@{/cart/add}" method="post" style="display: inline;">
-                    <input type="hidden" name="musicId" th:value="${favourite.musicId}">
-                    <input type="number" name="quantity" value="1" min="1" style="width: 60px;">
-                    <button type="submit" class="btn btn-primary">加入购物车</button>
-                </form>
+
+            <div th:if="${favorites == null or favorites.isEmpty()}" style="text-align: center; padding: 40px; color: var(--ios-gray-2);">
+    <div style="font-size: 16px; margin-bottom: 16px;">暂无收藏</div>
+                <h3>暂无收藏的音乐</h3>
+                <p>去 <a th:href="@{/music/list}" class="ios-btn ios-btn-primary" style="margin-top: 16px;">音乐列表</a> 发现喜欢的音乐吧！</p>
             </div>
-        </li>
-    </ul>
+        </div>
+    </div>
 </div>
 
-<div th:if="${favourites == null or favourites.isEmpty()}" class="empty-message">
-    <h3>暂无收藏的音乐</h3>
-    <p>去 <a th:href="@{/music/list}">音乐列表</a> 发现喜欢的音乐吧！</p>
-</div>
-
-<div th:replace="fragments/footer :: footer"></div>
+<!-- iOS风格页脚 -->
+<footer style="background: var(--blur-bg); backdrop-filter: blur(20px); padding: 20px; margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: white;">
+        <div th:if="${siteInfo}">
+            <h4 th:text="${siteInfo.siteName}" style="margin-bottom: 8px;"></h4>
+            <p style="margin-bottom: 8px;">
+                    <span th:if="${siteInfo.customerServicePhone}">
+                        客服电话：<span th:text="${siteInfo.customerServicePhone}"></span> ·
+                    </span>
+                <span th:if="${siteInfo.email}">
+                        邮箱：<span th:text="${siteInfo.email}"></span>
+                    </span>
+            </p>
+            <p th:if="${siteInfo.copyright}" th:text="${siteInfo.copyright}"></p>
+        </div>
+        <div th:unless="${siteInfo}">
+            <p>© 2025 音乐商店 版权所有</p>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

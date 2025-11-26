@@ -2,102 +2,134 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>分类管理 - 音乐商店</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        .header { margin-bottom: 20px; }
-        .category-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        .category-table th, .category-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        .category-table th { background: #f8f9fa; }
-        .btn { padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-primary { background: #007bff; color: white; }
-        .btn-success { background: #28a745; color: white; }
-        .btn-warning { background: #ffc107; color: black; }
-        .btn-danger { background: #dc3545; color: white; }
-        .add-form { margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px; }
-        .form-group { margin-bottom: 10px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"] { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
-    </style>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
 </head>
 <body>
-<div class="header">
-    <a th:href="@{/music/list}">← 返回首页</a>
-    <h1>分类管理</h1>
-</div>
-
-<div class="add-form">
-    <h3>添加新分类</h3>
-    <form th:action="@{/admin/categories/add}" method="post">
-        <div class="form-group">
-            <label for="name">分类名称：</label>
-            <input type="text" id="name" name="name" required>
+<!-- iOS风格头部 -->
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/music/list}" class="ios-brand">
+            音乐商店
+        </a>
+        <div class="ios-nav-items">
+            <a th:href="@{/music/list}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">返回首页</a>
+            <a th:href="@{/admin/users}" class="ios-btn ios-btn-sm ios-btn-outline" style="color: white; border-color: white;">用户管理</a>
         </div>
-        <div class="form-group">
-            <label for="description">分类描述：</label>
-            <input type="text" id="description" name="description">
+    </div>
+</header>
+
+<div class="ios-container ios-fade-in">
+    <div class="ios-card">
+        <div style="padding: 20px;">
+            <h1 style="margin-bottom: 20px;">📚 分类管理</h1>
+
+            <!-- 添加分类表单 -->
+            <div class="ios-card" style="background: var(--ios-gray-6); margin-bottom: 20px;">
+                <div style="padding: 20px;">
+<h3 style="margin-bottom: 16px;">添加新分类</h3>
+                    <form th:action="@{/admin/categories/add}" method="post">
+                        <div style="display: flex; gap: 12px; align-items: flex-end;">
+                            <div style="flex: 1;">
+                                <label class="ios-label">分类名称</label>
+                                <input type="text" name="name" class="ios-input" required>
+                            </div>
+                            <div style="flex: 2;">
+                                <label class="ios-label">分类描述</label>
+                                <input type="text" name="description" class="ios-input">
+                            </div>
+                            <div>
+                                <button type="submit" class="ios-btn ios-btn-success">添加分类</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 分类列表 -->
+            <div th:if="${categories != null and not categories.isEmpty()}">
+                <h3 style="margin-bottom: 16px;">📋 分类列表</h3>
+                <div class="ios-list">
+                    <div th:each="category : ${categories}" class="ios-list-item">
+                        <div class="ios-list-item-content">
+                            <div class="ios-list-item-title" th:text="${category.name}"></div>
+                            <div class="ios-list-item-subtitle" th:text="${category.description}"></div>
+                        </div>
+                        <div class="ios-list-item-actions">
+                            <button type="button" class="ios-btn ios-btn-sm ios-btn-warning edit-category-btn"
+                                    th:data-id="${category.id}"
+                                    th:data-name="${category.name}"
+                                    th:data-description="${category.description}">
+                                编辑
+                            </button>
+                            <a th:href="@{'/admin/categories/delete/' + ${category.id}}" class="ios-btn ios-btn-sm ios-btn-danger"
+                               onclick="return confirm('确定要删除这个分类吗？删除后相关音乐的分类将变为空。')">
+                                删除
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${categories == null or categories.isEmpty()}" style="text-align: center; padding: 40px; color: var(--ios-gray-2);">
+                <div style="font-size: 48px; margin-bottom: 16px;">📚</div>
+                <h3>暂无分类</h3>
+                <p>请添加音乐分类</p>
+            </div>
         </div>
-        <button type="submit" class="btn btn-success">添加分类</button>
-    </form>
-</div>
-
-<table class="category-table">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>分类名称</th>
-        <th>描述</th>
-        <th>操作</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="category : ${categories}">
-        <td th:text="${category.id}"></td>
-        <td th:text="${category.name}"></td>
-        <td th:text="${category.description}"></td>
-        <td>
-            <!-- 使用数据属性代替内联onclick -->
-            <button type="button" class="btn btn-warning btn-sm edit-btn"
-                    th:data-id="${category.id}"
-                    th:data-name="${category.name}"
-                    th:data-description="${category.description}">
-                编辑
-            </button>
-            <a th:href="@{'/admin/categories/delete/' + ${category.id}}" class="btn btn-danger btn-sm"
-               onclick="return confirm('确定要删除这个分类吗？删除后相关音乐的分类将变为空。')">
-                删除
-            </a>
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-<!-- 编辑分类的模态框 -->
-<div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
-    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 5px; width: 400px;">
-        <h3>编辑分类</h3>
-        <form id="editForm" method="post">
-            <input type="hidden" id="editId" name="id">
-            <div class="form-group">
-                <label for="editName">分类名称：</label>
-                <input type="text" id="editName" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="editDescription">分类描述：</label>
-                <input type="text" id="editDescription" name="description">
-            </div>
-            <div style="text-align: center; margin-top: 20px;">
-                <button type="submit" class="btn btn-primary">保存修改</button>
-                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">取消</button>
-            </div>
-        </form>
     </div>
 </div>
+
+<!-- 编辑分类的模态框 -->
+<div id="editModal" class="ios-modal" style="display: none;">
+    <div class="ios-modal-content">
+        <div class="ios-modal-header">
+<h3>编辑分类</h3>
+        </div>
+        <form id="editForm" method="post" class="ios-modal-body">
+            <input type="hidden" id="editId" name="id">
+            <div class="ios-form-group">
+                <label class="ios-label">分类名称：</label>
+                <input type="text" id="editName" name="name" class="ios-input" required>
+            </div>
+            <div class="ios-form-group">
+                <label class="ios-label">分类描述：</label>
+                <input type="text" id="editDescription" name="description" class="ios-input">
+            </div>
+        </form>
+        <div class="ios-modal-footer">
+            <button type="submit" form="editForm" class="ios-btn ios-btn-primary">保存修改</button>
+            <button type="button" class="ios-btn" onclick="closeEditModal()">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- iOS风格页脚 -->
+<footer style="background: var(--blur-bg); backdrop-filter: blur(20px); padding: 20px; margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: white;">
+        <div th:if="${siteInfo}">
+            <h4 th:text="${siteInfo.siteName}" style="margin-bottom: 8px;"></h4>
+            <p style="margin-bottom: 8px;">
+                    <span th:if="${siteInfo.customerServicePhone}">
+                        客服电话：<span th:text="${siteInfo.customerServicePhone}"></span> ·
+                    </span>
+                <span th:if="${siteInfo.email}">
+                        邮箱：<span th:text="${siteInfo.email}"></span>
+                    </span>
+            </p>
+            <p th:if="${siteInfo.copyright}" th:text="${siteInfo.copyright}"></p>
+        </div>
+        <div th:unless="${siteInfo}">
+            <p>© 2025 音乐商店 版权所有</p>
+        </div>
+    </div>
+</footer>
 
 <script>
     // 为所有编辑按钮添加点击事件监听器
     document.addEventListener('DOMContentLoaded', function() {
-        var editButtons = document.querySelectorAll('.edit-btn');
+        var editButtons = document.querySelectorAll('.edit-category-btn');
         editButtons.forEach(function(button) {
             button.addEventListener('click', function() {
                 var id = this.getAttribute('data-id');
@@ -112,7 +144,7 @@
         document.getElementById('editId').value = id;
         document.getElementById('editName').value = name;
         document.getElementById('editDescription').value = description || '';
-        document.getElementById('editModal').style.display = 'block';
+        document.getElementById('editModal').style.display = 'flex';
     }
 
     function closeEditModal() {
@@ -129,7 +161,5 @@
         }
     });
 </script>
-
-<div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>

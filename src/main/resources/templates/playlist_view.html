@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${playlist.name} + ' - 歌单'">歌单</title>
+    <link th:href="@{/css/ios-style.css}" rel="stylesheet">
+</head>
+<body>
+<header class="ios-header">
+    <div class="ios-navbar">
+        <a th:href="@{/playlist/list}" class="ios-btn ios-btn-outline">⬅ 返回</a>
+        <span class="ios-brand" th:text="${playlist.name}"></span>
+        <div class="ios-nav-items">
+            <form th:action="@{'/playlist/visibility/' + ${playlist.id}}" method="post" style="display:inline-flex; gap:8px; align-items:center;">
+                <select name="visibility">
+                    <option th:selected="${playlist.visibility == 'private'}" value="private">私有</option>
+                    <option th:selected="${playlist.visibility == 'shared'}" value="shared">共享</option>
+                </select>
+                <button class="ios-btn ios-btn-primary" type="submit">更新可见性</button>
+            </form>
+        </div>
+    </div>
+</header>
+<div class="ios-container">
+    <div class="ios-card" style="padding:16px;">
+        <p th:text="${playlist.description}">歌单简介</p>
+        <h3>曲目</h3>
+        <div th:if="${#lists.isEmpty(playlist.tracks)}">暂无曲目</div>
+        <ul th:unless="${#lists.isEmpty(playlist.tracks)}">
+            <li th:each="m,iter : ${playlist.tracks}">
+                <span th:text="${iter.index + 1}"></span>.
+                <a th:href="@{'/music/detail/' + ${m.id}}" th:text="${m.title}" data-role="track" th:attr="data-id=${m.id}"></a>
+                <form th:action="@{/playlist/removeTrack}" method="post" style="display:inline;margin-left:8px;">
+                    <input type="hidden" name="playlistId" th:value="${playlist.id}">
+                    <input type="hidden" name="musicId" th:value="${m.id}">
+                    <button class="ios-btn ios-btn-outline" type="submit">移除</button>
+                </form>
+            </li>
+        </ul>
+        <!-- 播放器 -->
+        <div class="ios-card" style="margin-top:16px; padding:16px;">
+<div class="form-section-title">播放器</div>
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <button id="btnPrev" class="ios-btn ios-btn-secondary">⏮ 上一首</button>
+<button id="btnPlay" class="ios-btn ios-btn-success">播放</button>
+                <button id="btnNext" class="ios-btn ios-btn-secondary">⏭ 下一首</button>
+                <button id="btnMode" class="ios-btn ios-btn-outline" title="切换播放模式">🔁 顺序播放</button>
+                <span id="nowPlaying" style="margin-left:8px; color: var(--ios-secondary);">未播放</span>
+                <span id="playStatus" aria-live="polite" style="margin-left:8px;"></span>
+            </div>
+            <audio id="audio" preload="none" style="width:100%; margin-top:12px;" controls></audio>
+        </div>
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            const PLAYLIST_ID = [[${playlist.id}]];
+            document.addEventListener('DOMContentLoaded', function(){
+                window.PLAYLIST = Array.from(document.querySelectorAll('a[data-role="track"]')).map(a => ({
+                    id: parseInt(a.getAttribute('data-id')), title: a.textContent.trim()
+                }));
+            });
+            /*]]>*/
+        </script>
+        <script src="/js/player.js"></script>
+    </div>
+</div>
+</body>
+</html>
